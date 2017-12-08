@@ -3,9 +3,6 @@
 # Implements some nice color prompt features, including git status.
 #
 
-# only show last 3 directories in path
-PROMPT_DIRTRIM=3
-
 _black=`tput setaf 0`
 _red=`tput setaf 1`
 _green=`tput setaf 2`
@@ -54,11 +51,9 @@ prompt_callback() {
     fi
     unset exitcode
 
-    # re-implement PROMPT_DIRTRIM trimming
+    # [JN] removed dir trimming
     local wdlong=${PWD/$HOME/\~}
-    local wd=`echo $wdlong \
-        | sed -e "s/.*\(\(\/.*\)\{$PROMPT_DIRTRIM\}\)/\1/"`
-
+    local wd=`echo $wdlong`
 
     if [ -d '.git' ]; then
         local gitdir='.git'
