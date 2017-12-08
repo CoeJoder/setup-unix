@@ -53,7 +53,7 @@ if command -v dircolors > /dev/null ; then
     eval "$(dircolors -b $DIRCOLORS)"
     unset DIRCOLORS
 
-    alias ls='ls --color=auto'
+    alias ls='ls --color=always'
     #alias dir='dir --color=auto'
     #alias vdir='vdir --color=auto'
 
@@ -61,6 +61,10 @@ if command -v dircolors > /dev/null ; then
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
+
+# [JN]
+export LESS='-R'
+export PYGMENTIZE_STYLE='paraiso-dark'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like

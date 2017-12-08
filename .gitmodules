@@ -1,15 +1,20 @@
 [submodule ".nvm"]
 	path = .nvm
 	url = https://github.com/creationix/nvm
+    ignore = dirty
 [submodule ".vim"]
 	path = .vim
 	url = git@github.com:aspyrx/.vim
+    ignore = dirty
 [submodule ".bash-git-prompt"]
 	path = .bash-git-prompt
 	url = https://github.com/magicmonty/bash-git-prompt
+    ignore = dirty
 [submodule ".npm_global"]
 	path = .npm_global
 	url = git@github.com:aspyrx/.npm_global
+    ignore = dirty
 [submodule ".n"]
 	path = .n
 	url = https://github.com/tj/n
+    ignore = dirty

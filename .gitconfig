@@ -2,8 +2,10 @@
 [push]
     default = simple
 [user]
-    name = Stan Zhang
-    email = stan.zhang2@gmail.com
+    name = CoeJoder
+    email = CoeJoder@users.noreply.github.com
+[credential]
+    helper = cache --timeout=3600
 [core]
     excludesfile = ~/.gitignore_global
     fscache = true
