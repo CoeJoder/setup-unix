@@ -35,7 +35,7 @@ bash for the shell, all set up using the configurations in this repo.
 #### Installation
 
 1. Clone the repo and move the files into your home directory:
-    - `rsync -avh ~/setup-unix ~`
+    - `rsync -avh ~/setup-unix/ ~`
         - Thanks to [@mark-walle](https://github.com/mark-walle) for this trick
           from [issue #1](https://github.com/aspyrx/setup-unix/issues/1).
     - This *WILL* overwrite existing files; please make a backup if you care
