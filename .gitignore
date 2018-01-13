@@ -20,6 +20,7 @@
 !.bash_aliases
 !.lessfilter
 !.git-prompt-colors.sh
+!.bash-get-prompt
 
 !.tmux.conf
 !.tmux.darwin.conf
@@ -29,6 +30,7 @@
 !.config/
 .config/*
 !.config/nvim/
+!.nvm
 
 !.local/
 .local/*
