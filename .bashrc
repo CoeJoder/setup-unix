@@ -69,7 +69,7 @@ export PYGMENTIZE_STYLE='paraiso-dark'
 
 GIT_PROMPT_THEME="Minimal_UserHost"
 GIT_PROMPT_ONLY_IN_REPO=0
-source .bash-git-prompt/gitprompt.sh
+source ~/.bash-git-prompt/gitprompt.sh
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
