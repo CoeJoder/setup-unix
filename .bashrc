@@ -36,10 +36,11 @@ else
     color_prompt=
 fi
 
-if [ "$color_prompt" == yes ]; then
-    source ~/.bash_color_prompt.sh
-else
+if [ "$color_prompt" != yes ]; then
     PS1='\u@\h:\w \$ '
+#else
+    # [JN] prompt customized below, instead
+    #source ~/.bash_color_prompt.sh
 fi
 unset color_prompt force_color_prompt
 
@@ -65,6 +66,10 @@ fi
 # [JN]
 export LESS='-R'
 export PYGMENTIZE_STYLE='paraiso-dark'
+
+GIT_PROMPT_THEME="Minimal_UserHost"
+GIT_PROMPT_ONLY_IN_REPO=0
+source .bash-git-prompt/gitprompt.sh
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
