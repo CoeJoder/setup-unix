@@ -67,7 +67,7 @@ fi
 export LESS='-R'
 export PYGMENTIZE_STYLE='paraiso-dark'
 
-GIT_PROMPT_THEME="Minimal_UserHost"
+GIT_PROMPT_THEME="Custom"
 GIT_PROMPT_ONLY_IN_REPO=0
 source ~/.bash-git-prompt/gitprompt.sh
 

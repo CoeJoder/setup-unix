@@ -1,7 +1,7 @@
 # This is the custom theme template for gitprompt.sh
 
 override_git_prompt_colors() {
-  GIT_PROMPT_THEME_NAME="MyCustom"
+  GIT_PROMPT_THEME_NAME="Custom"
 
   GIT_PROMPT_START_USER="_LAST_COMMAND_INDICATOR_
   ${ResetColor}[${Cyan}$(whoami)${ResetColor}@${Green}$(hostname):${Yellow}${PathShort}${ResetColor}]"
@@ -15,4 +15,4 @@ override_git_prompt_colors() {
 }
 
 
-reload_git_prompt_colors "MyCustom"
+reload_git_prompt_colors "Custom"
