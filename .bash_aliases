@@ -14,3 +14,7 @@ npm_g() {
     (cd ~/.npm_global && npm $@)
 }
 
+# VM convenience method
+vm() {
+    ssh joe@pve.local "/bin/bash -s -- $@" < ~/scripts/vm.sh
+}
