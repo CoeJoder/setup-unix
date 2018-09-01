@@ -16,5 +16,6 @@ npm_g() {
 
 # VM convenience method
 vm() {
-    ssh joe@pve.local "/bin/bash -s -- $@" < ~/scripts/vm.sh
+    (/bin/bash ~/scripts/vm.sh $@)
+    #ssh joe@pve.local "/bin/bash -s -- $@" < ~/scripts/vm.sh
 }
