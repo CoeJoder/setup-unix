@@ -22,10 +22,9 @@ vm() {
 
 # VM bash autocompletion
 _vm_autocomplete() {
-    local cur prev params_1 params_2 vms
+    local cur all_options vms
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
-    prev="${COMP_WORDS[COMP_CWORD-1]}"
     all_options="start shutdown reset suspend resume stop status vnc spice listvms"
 
     if [[ "${COMP_CWORD}" == 1 ]]; then
