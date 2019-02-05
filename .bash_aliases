@@ -19,3 +19,23 @@ vm() {
     (/bin/bash ~/scripts/vm.sh $@)
     #ssh joe@pve.local "/bin/bash -s -- $@" < ~/scripts/vm.sh
 }
+
+# VM bash autocompletion
+_vm_autocomplete() {
+    local cur prev params_1 params_2 vms
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    all_options="start shutdown reset suspend resume stop status vnc spice listvms"
+
+    if [[ "${COMP_CWORD}" == 1 ]]; then
+        COMPREPLY=( $(compgen -W "${all_options}" -- ${cur}) )
+        return 0
+    elif [[ "${COMP_CWORD}" == 2 ]]; then
+        vms="$(vm listvms)"
+        COMPREPLY=( $(compgen -W "${vms}" -- ${cur}) )
+        return 0
+    fi
+}
+complete -F _vm_autocomplete vm
+
