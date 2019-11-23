@@ -48,3 +48,8 @@
 
 !.npm_global
 
+# [JN] track specific scripts
+!scripts
+scripts/*
+!scripts/vm.sh
+
