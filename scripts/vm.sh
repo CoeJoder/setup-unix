@@ -40,8 +40,8 @@ if ([[ $# -ne 0 ]] && [[ "$_oneArg" != 0 ]] && [[ "$_twoArgs" != 0 ]] && [[ "$_i
         "\n      vm.sh listvms" \
         "\n  # run command for each VM" \
         "\n      vm.sh shutdown|stop|status" \
-        "\n  # run command for the given VM" \
-        "\n      vm.sh start|shutdown|reset|suspend|resume|stop|status|vnc|spice <vmname>" \
+        "\n  # run command for the given VMs" \
+        "\n      vm.sh start|shutdown|reset|suspend|resume|stop|status|vnc|spice <csv_vm_names>" \
         "\n  # set VM options" \
         "\n      vm.sh set <vmname> [OPTIONS]"
     exit 1
@@ -50,7 +50,7 @@ fi
 # if no-args or single-arg "status", just run "qm list"
 if [[ $# -eq 0 ]] || \
     ([[ "$_oneArg" == 0 ]] && [[ "$1" == "status" ]]); then
-    ssh $SSH_HOST "sudo qm list"
+    ssh -n $SSH_HOST "sudo qm list"
     exit 0
 fi
 
@@ -58,7 +58,7 @@ fi
 declare -A _vmMap
 while read -r _name _id _status; do
     _vmMap["$_name"]="$_id $_status"
-done <<< "$(ssh $SSH_HOST 'sudo qm list' | awk -F" " 'NR>1 {print $2" "$1" "$3}')"
+done <<< "$(ssh -n $SSH_HOST 'sudo qm list' | awk -F" " 'NR>1 {print $2" "$1" "$3}')"
 
 # perform task according to cmdline params
 if [[ "$_oneArg" == 0 ]]; then
@@ -69,47 +69,49 @@ if [[ "$_oneArg" == 0 ]]; then
         for _vmName in "${!_vmMap[@]}"; do
             read -r _vmid _status <<< ${_vmMap[$_vmName]}
             printf ${_vmName}...
-            echo "$(ssh $SSH_HOST "sudo qm $_command $_vmid")"
+            echo "$(ssh -n $SSH_HOST "sudo qm $_command $_vmid")"
         done
     fi
 elif ([[ "$_twoArgs" == 0 ]] || [[ "$_isSet" == 0 ]]); then
     _command=$1
-    _vmName=$2
-    read -r _vmid _status <<< ${_vmMap[$_vmName]}
-    if [[ -z "$_vmid" ]]; then
-        echo "VM not found: $_vmName"
-        exit 1
-    fi
-    if [[ "$_command" == vnc ]]; then
-        _wpVncViewer="$(wslpath -u "$VNC_VIEWER")"
-        if [[ ! -f "$_wpVncViewer" ]]; then
-            echo "VNC Viewer not found: $VNC_VIEWER"
-            exit 1
+    _csvVmNames=$2
+    echo $_csvVmNames | sed -n 1'p' | tr ',' '\n' | while read _vmName; do
+        read -r _vmid _status <<< ${_vmMap[$_vmName]}
+        if [[ -z "$_vmid" ]]; then
+            echo "VM not found: $_vmName"
+            continue
         fi
-        _port=$(ssh $SSH_HOST "sudo qm config $_vmid" \
-            | grep '^args:' | sed 's/.*-vnc 0\.0\.0\.0:\([0-9]*\).*/\1/')
-        "${_wpVncViewer}" "${VNC_HOST}:${_port}" &
-    elif [[ "$_command" == spice ]]; then
-        _wpRemoteViewer="$(wslpath -u "$REMOTE_VIEWER")"
-        _wpVvFile="$(wslpath -u "$VV_FILE")"
-        if [[ ! -f "$_wpRemoteViewer" ]]; then
-            echo "Remote Viewer not found: $REMOTE_VIEWER"
-            exit 1
+        if [[ "$_command" == vnc ]]; then
+            _wpVncViewer="$(wslpath -u "$VNC_VIEWER")"
+            if [[ ! -f "$_wpVncViewer" ]]; then
+                echo "VNC Viewer not found: $VNC_VIEWER"
+                continue
+            fi
+            _port=$(ssh -n $SSH_HOST "sudo qm config $_vmid" \
+                | grep '^args:' | sed 's/.*-vnc 0\.0\.0\.0:\([0-9]*\).*/\1/')
+            "${_wpVncViewer}" "${VNC_HOST}:${_port}" &
+        elif [[ "$_command" == spice ]]; then
+            _wpRemoteViewer="$(wslpath -u "$REMOTE_VIEWER")"
+            _wpVvFile="$(wslpath -u "$VV_FILE")"
+            if [[ ! -f "$_wpRemoteViewer" ]]; then
+                echo "Remote Viewer not found: $REMOTE_VIEWER"
+                continue
+            fi
+            ssh -n $SSH_HOST "sudo pvesh create /nodes/${NODE_NAME}/qemu/${_vmid}/spiceproxy --output-format json-pretty" \
+                    | jq -r 'def kv: to_entries[] | "\(.key)=\(.value)"; "[virt-viewer]", kv' > "$_wpVvFile"
+            if [[ ! -f "$_wpVvFile" ]]; then
+                echo "Failed to create VirtViewer connection file."
+                continue
+            fi
+            "$_wpRemoteViewer" -- "$VV_FILE" &
+        elif [[ "$_isSet" == 0 ]]; then
+            printf ${_vmName}...
+            echo "$(ssh -n $SSH_HOST "sudo qm set $_vmid ${@:3}")"
+        else
+            printf ${_vmName}...
+            echo "$(ssh -n $SSH_HOST "sudo qm $_command $_vmid")"
         fi
-        ssh $SSH_HOST "sudo pvesh create /nodes/${NODE_NAME}/qemu/${_vmid}/spiceproxy --output-format json-pretty" \
-                | jq -r 'def kv: to_entries[] | "\(.key)=\(.value)"; "[virt-viewer]", kv' > "$_wpVvFile"
-        if [[ ! -f "$_wpVvFile" ]]; then
-            echo "Failed to create VirtViewer connection file."
-            exit 1
-        fi
-        "$_wpRemoteViewer" -- "$VV_FILE" &
-    elif [[ "$_isSet" == 0 ]]; then
-        printf ${_vmName}...
-        echo "$(ssh $SSH_HOST "sudo qm set $_vmid ${@:3}")"
-    else
-        printf ${_vmName}...
-        echo "$(ssh $SSH_HOST "sudo qm $_command $_vmid")"
-    fi
+    done
     echo "Done."
 fi
 
