@@ -74,6 +74,11 @@ for path in "$@"; do
                     # extension recognized
                     pygmentize -f 256 -O style=$PYGMENTIZE_STYLE "$path"
                     ;;
+                # add unrecognized extensions here
+                .kts)
+                    # kotlin-script: use the kotlin lexer
+                    pygmentize -f 256 -O style=$PYGMENTIZE_STYLE -l kotlin "$path"
+                    ;;
                 *)
                     # parse the shebang script header if it exists
                     lexer=$(head -n 1 "$path" |grep "^#\!" |awk -F" " \
