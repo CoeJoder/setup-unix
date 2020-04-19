@@ -1,15 +1,16 @@
 #!/bin/bash
 ## title:           vm.sh
 ## description:     A remote control script for Proxmox's QEMU server, with some additional
-##                  features for convenience.  Intended to be run from a WSL/Ubuntu environment on Bash.
+##                  features for convenience.  Intended to be run from a recent version of WSL/Ubuntu.
 ## author:          Joe Nasca
 ## date:            8/13/2018
-## version:         0.1
+## version:         0.2
 REMOTE_VIEWER="C:\Program Files\VirtViewer v6.0-256\bin\remote-viewer.exe"
 VV_FILE="C:\Users\Joe\Downloads\pve_spice_connect.vv"
 VNC_VIEWER="C:\Users\Joe\Downloads\vncviewer64-1.9.0.exe"
 VNC_HOST="pve.local"
 NODE_NAME="pve"
+NODE_PORT=8006
 SSH_HOST="joe@pve.local"
 
 shopt -s nocasematch
@@ -27,6 +28,7 @@ _oneArg=$?
     [[ "$1" == "resume" ]] || \
     [[ "$1" == "stop" ]] || \
     [[ "$1" == "status" ]] || \
+    [[ "$1" == "novnc" ]] || \
     [[ "$1" == "vnc" ]] || \
     [[ "$1" == "spice" ]])
 _twoArgs=$?
@@ -41,7 +43,7 @@ if ([[ $# -ne 0 ]] && [[ "$_oneArg" != 0 ]] && [[ "$_twoArgs" != 0 ]] && [[ "$_i
         "\n  # run command for each VM" \
         "\n      vm.sh shutdown|stop|status" \
         "\n  # run command for the given VMs" \
-        "\n      vm.sh start|shutdown|reset|suspend|resume|stop|status|vnc|spice <csv_vm_names>" \
+        "\n      vm.sh start|shutdown|reset|suspend|resume|stop|status|novnc|vnc|spice <csv_vm_names>" \
         "\n  # set VM options" \
         "\n      vm.sh set <vmname> [OPTIONS]"
     exit 1
@@ -81,7 +83,9 @@ elif ([[ "$_twoArgs" == 0 ]] || [[ "$_isSet" == 0 ]]); then
             echo "VM not found: $_vmName"
             continue
         fi
-        if [[ "$_command" == vnc ]]; then
+        if [[ "$_command" == novnc ]]; then
+            wslview "https://${VNC_HOST}:${NODE_PORT}/?console=kvm&novnc=1&vmid=${_vmid}&vmname=${_vmName}&node=${NODE_NAME}&resize=off&cmd="
+        elif [[ "$_command" == vnc ]]; then
             _wpVncViewer="$(wslpath -u "$VNC_VIEWER")"
             if [[ ! -f "$_wpVncViewer" ]]; then
                 echo "VNC Viewer not found: $VNC_VIEWER"
