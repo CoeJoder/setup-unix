@@ -4,14 +4,15 @@
 ##                  features for convenience.  Intended to be run from a recent version of WSL/Ubuntu.
 ## author:          Joe Nasca
 ## date:            8/13/2018
-## version:         0.2
+## version:         0.3
 REMOTE_VIEWER="C:\Program Files\VirtViewer v6.0-256\bin\remote-viewer.exe"
 VV_FILE="C:\Users\Joe\Downloads\pve_spice_connect.vv"
 VNC_VIEWER="C:\Users\Joe\Downloads\vncviewer64-1.9.0.exe"
-VNC_HOST="pve.local"
+NODE_USER="joe"
 NODE_NAME="pve"
+NODE_HOSTNAME="pve.local"
 NODE_PORT=8006
-SSH_HOST="joe@pve.local"
+SSH_HOST="${NODE_USER}@${NODE_HOSTNAME}"
 
 shopt -s nocasematch
 [[ "$#" -eq 1 ]] && \
@@ -84,7 +85,14 @@ elif ([[ "$_twoArgs" == 0 ]] || [[ "$_isSet" == 0 ]]); then
             continue
         fi
         if [[ "$_command" == novnc ]]; then
-            wslview "https://${VNC_HOST}:${NODE_PORT}/?console=kvm&novnc=1&vmid=${_vmid}&vmname=${_vmName}&node=${NODE_NAME}&resize=off&cmd="
+            # this feature relies on the system's default web browser having a Tampermonkey script enabled
+            # which sets an authentication cookie based on the URL param appended here
+            read -sp "${NODE_USER}@${NODE_HOSTNAME}'s password: " password </dev/tty
+            printf "\n"
+            _baseUrl="https://${NODE_HOSTNAME}:${NODE_PORT}/?console=kvm&novnc=1&vmid=${_vmid}&vmname=${_vmName}&node=${NODE_NAME}&resize=off&cmd="
+            _uriEncodedTicket="$(ssh -n $SSH_HOST "sudo pvesh create /access/ticket --username=${NODE_USER}@pam --password=${password} --output-format json-pretty" \
+                | jq -r '.ticket|@uri')"
+            wslview "${_baseUrl}&PVEAuthCookie=${_uriEncodedTicket}"
         elif [[ "$_command" == vnc ]]; then
             _wpVncViewer="$(wslpath -u "$VNC_VIEWER")"
             if [[ ! -f "$_wpVncViewer" ]]; then
@@ -93,7 +101,7 @@ elif ([[ "$_twoArgs" == 0 ]] || [[ "$_isSet" == 0 ]]); then
             fi
             _port=$(ssh -n $SSH_HOST "sudo qm config $_vmid" \
                 | grep '^args:' | sed 's/.*-vnc 0\.0\.0\.0:\([0-9]*\).*/\1/')
-            "${_wpVncViewer}" "${VNC_HOST}:${_port}" &
+            "${_wpVncViewer}" "${NODE_HOSTNAME}:${_port}" &
         elif [[ "$_command" == spice ]]; then
             _wpRemoteViewer="$(wslpath -u "$REMOTE_VIEWER")"
             _wpVvFile="$(wslpath -u "$VV_FILE")"
@@ -102,7 +110,7 @@ elif ([[ "$_twoArgs" == 0 ]] || [[ "$_isSet" == 0 ]]); then
                 continue
             fi
             ssh -n $SSH_HOST "sudo pvesh create /nodes/${NODE_NAME}/qemu/${_vmid}/spiceproxy --output-format json-pretty" \
-                    | jq -r 'def kv: to_entries[] | "\(.key)=\(.value)"; "[virt-viewer]", kv' > "$_wpVvFile"
+                | jq -r 'def kv: to_entries[] | "\(.key)=\(.value)"; "[virt-viewer]", kv' > "$_wpVvFile"
             if [[ ! -f "$_wpVvFile" ]]; then
                 echo "Failed to create VirtViewer connection file."
                 continue
