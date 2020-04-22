@@ -8,6 +8,12 @@ if [ -d "$HOME/.npm_global/node_modules/.bin" ] ; then
     PATH="$HOME/.npm_global/node_modules/.bin:$PATH"
 fi
 
+# [JN] setup jython home
+# can't use `JYTHON_HOME` due to bug in virtualenv
+if [ -x /usr/local/lib/jython2.7.1/bin/jython ] ; then
+    export JYTHON_HQ="/usr/local/lib/jython2.7.1"
+fi
+
 # Set up the n Node version manager
 if [ -x "$HOME/.n/bin/n" ] ; then
     export N_PREFIX="$HOME/.local"

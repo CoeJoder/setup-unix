@@ -4,8 +4,8 @@ case $- in
       *) return;;
 esac
 
-#[JN] start tmux every time
-if [ "$TMUX" = "" ]; then tmux; fi
+#[JN] start tmux with the current environment
+if [ "$TMUX" = "" ]; then tmux -L default; fi
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -69,6 +69,7 @@ fi
 # [JN]
 export LESS='-R'
 export PYGMENTIZE_STYLE='paraiso-dark'
+export DISPLAY=localhost:0
 
 GIT_PROMPT_THEME="Custom"
 GIT_PROMPT_ONLY_IN_REPO=0
