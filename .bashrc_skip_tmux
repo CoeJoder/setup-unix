@@ -1,0 +1,4 @@
+#!/bin.bash
+export SKIP_TMUX=0
+. ~/.bashrc
+
