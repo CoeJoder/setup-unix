@@ -56,10 +56,14 @@ prompt_callback() {
     local wd=`echo $wdlong`
 
     if [ -d '.git' ]; then
-        local gitdir='.git'
+        local gitdir="$PWD/.git"
     else
         local gitdir=`git rev-parse --git-dir 2>/dev/null`
-        [ $? -ne 0 ] && unset $gitdir
+        [ $? -ne 0 ] && unset gitdir
+    fi
+
+    if [ "$gitdir" = "$HOME/.git" ]; then
+        unset gitdir
     fi
 
     # inspired by https://github.com/magicmonty/bash-git-prompt/blob/master/gitstatus.sh
@@ -97,14 +101,14 @@ prompt_callback() {
                 esac
                 unset staty
             done
-        done < <(LC_ALL=C git status --porcelain --branch --untracked-files=normal)
+        done < <(LC_ALL=C git status --porcelain --branch 2>/dev/null)
         unset line
 
         local stashfile="$gitdir/logs/refs/stash" wcline
-        if [ -e $stashfile ]; then
+        if [ -e "$stashfile" ]; then
             while IFS='' read -r wcline || [ -n "$wcline" ]; do
                 ((stashed++))
-            done < $stashfile
+            done < "$stashfile"
         fi
         unset stashfile wcline
 
@@ -121,7 +125,7 @@ prompt_callback() {
             if [ -n "$tag" ]; then
                 branch="$tag"
             else
-                branch=":`git rev-parse --short HEAD`"
+                branch=":`git rev-parse --short HEAD 2>/dev/null`"
             fi
             unset tag
         else
@@ -177,7 +181,7 @@ prompt_callback() {
     fi
     [ ${#wd} -ge ${#wdlong} ] && wd=$wdlong
 
-    local title="\[\e]2;$USER@$HOSTNAME:$wd\a\]"
+    local title="\[\e]2;$wd\a\]"
     local statusline="\[$_cyan$_bold\]$wd \[$_reset\]"
     PS1="$title\[\r\]$statusline$gitstatus$exitstr"
 }

@@ -41,9 +41,6 @@ if [ -f ~/.bashrc ]; then
     source ~/.bashrc
 fi
 
-# Load avn
-[[ -s "$HOME/.avn/bin/avn.sh" ]] && source "$HOME/.avn/bin/avn.sh"
-
 # use colors for less, man, etc.
 export LESS="--RAW-CONTROL-CHARS"
 export LESS_TERMCAP_mb=$(tput bold; tput setaf 2) # green
@@ -61,4 +58,9 @@ export LESS_TERMCAP_ZO=$(tput ssupm)
 export LESS_TERMCAP_ZW=$(tput rsupm)
 
 export EDITOR='nvim'
+
+if [ -f ~/.bash_profile.local.sh ] ; then
+    # local configuration
+    source ~/.bash_profile.local.sh
+fi
 

@@ -21,6 +21,7 @@
 !.bash_aliases
 !.lessfilter
 !.git-prompt-colors.sh
+!.inputrc
 
 !.tmux.conf
 !.tmux.darwin.conf
