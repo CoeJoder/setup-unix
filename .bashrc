@@ -7,6 +7,10 @@ esac
 #[JN] start tmux with the current environment
 if [ "$TMUX" = "" ] && [ "$SKIP_TMUX" != 0 ]; then tmux -L default; fi
 
+# set neovim as default editor
+export VISUAL=nvim
+export EDITOR="$VISUAL"
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth

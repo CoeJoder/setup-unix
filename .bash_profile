@@ -8,6 +8,11 @@ if [ -d "$HOME/.npm_global/node_modules/.bin" ] ; then
     PATH="$HOME/.npm_global/node_modules/.bin:$PATH"
 fi
 
+# [JN] add ~/bin to path
+if [ -d "$HOME/bin" ] ; then
+  PATH="$PATH:$HOME/bin"
+fi
+
 # [JN] setup jython home
 # can't use `JYTHON_HOME` due to bug in virtualenv
 if [ -x /usr/local/lib/jython2.7.1/bin/jython ] ; then
