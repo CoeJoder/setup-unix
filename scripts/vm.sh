@@ -53,7 +53,7 @@ fi
 # if no-args or single-arg "status", just run "qm list"
 if [[ $# -eq 0 ]] || \
     ([[ "$_oneArg" == 0 ]] && [[ "$1" == "status" ]]); then
-    ssh -n $SSH_HOST "sudo qm list"
+    ssh -n $SSH_HOST "sudo qm list" | grep -E --color=auto "\brunning\b|$"
     exit 0
 fi
 
