@@ -38,3 +38,7 @@ _vm_autocomplete() {
 }
 complete -F _vm_autocomplete vm
 
+# kill all tmux session except the current one
+tmux_killall() {
+    tmux list-sessions | grep -v attached | awk 'BEGIN{FS=":"}{print $1}' | xargs -n 1 tmux kill-session -t || echo No sessions to kill
+}
