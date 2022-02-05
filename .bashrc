@@ -4,9 +4,6 @@ case $- in
       *) return;;
 esac
 
-#[JN] start tmux with the current environment
-if [ "$TMUX" = "" ] && [ "$SKIP_TMUX" != 0 ]; then tmux -L default; fi
-
 # set neovim as default editor
 export VISUAL=nvim
 export EDITOR="$VISUAL"

@@ -9,6 +9,34 @@ alias l='ls -CF'
 # use absolute paths for wsltty UI features e.g. ctrl+click paths
 set -P
 
+# ensure agent is running
+# see: https://stackoverflow.com/a/48509425/159570
+ssh-add -l &>/dev/null
+if [ "$?" == 2 ]; then
+    # Could not open a connection to your authentication agent.
+
+    # Load stored agent connection info.
+    test -r ~/.ssh-agent && \
+        eval "$(<~/.ssh-agent)" >/dev/null
+
+    ssh-add -l &>/dev/null
+    if [ "$?" == 2 ]; then
+        # Start agent and store agent connection info.
+        (umask 066; ssh-agent > ~/.ssh-agent)
+        eval "$(<~/.ssh-agent)" >/dev/null
+    fi
+fi
+
+# load identities
+ssh-add -l &>/dev/null
+if [ "$?" == 1 ]; then
+    # The agent has no identities.
+    # Time to add one.
+    if [ -f ~/.ssh/id_ed25519_github ]; then
+        ssh-add -t 1d ~/.ssh/id_ed25519_github
+    fi
+fi
+
 # work with npm in ~/.npm_globals
 npm_g() {
     (cd ~/.npm_global && npm $@)
@@ -42,3 +70,7 @@ complete -F _vm_autocomplete vm
 tmux_killall() {
     tmux list-sessions | grep -v attached | awk 'BEGIN{FS=":"}{print $1}' | xargs -n 1 tmux kill-session -t || echo No sessions to kill
 }
+
+# start tmux with the current environment
+if [ "$TMUX" = "" ] && [ "$SKIP_TMUX" != 0 ]; then tmux -L default; fi
+
