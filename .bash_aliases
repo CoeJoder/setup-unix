@@ -27,15 +27,24 @@ if [ "$?" == 2 ]; then
     fi
 fi
 
-# load identities
-ssh-add -l &>/dev/null
-if [ "$?" == 1 ]; then
-    # The agent has no identities.
-    # Time to add one.
-    if [ -f ~/.ssh/id_ed25519_github ]; then
-        ssh-add -t 1d ~/.ssh/id_ed25519_github
+# add a SSH key to the agent
+_ssh_add() {
+    if [ -f "$1" ]; then
+        ssh-add -t 1d "$1"
+    else
+        echo "SSH key not found: $1"
     fi
-fi
+}
+
+# load Github SSH key
+gitssh() {
+    _ssh_add ~/.ssh/id_ed25519_github
+}
+
+# load Vultr SSH key
+vultrssh() {
+    _ssh_add ~/.ssh/id_ed25519_vultr
+}
 
 # work with npm in ~/.npm_globals
 npm_g() {
@@ -69,6 +78,11 @@ complete -F _vm_autocomplete vm
 # kill all tmux session except the current one
 tmux_killall() {
     tmux list-sessions | grep -v attached | awk 'BEGIN{FS=":"}{print $1}' | xargs -n 1 tmux kill-session -t || echo No sessions to kill
+}
+
+# print the external IP address to stdout
+whatismyip() {
+    echo "$(curl -kLs https://ipinfo.io/ip)"
 }
 
 # start tmux with the current environment
