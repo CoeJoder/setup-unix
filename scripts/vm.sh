@@ -7,7 +7,7 @@
 ## version:         0.3
 REMOTE_VIEWER="C:\Program Files\VirtViewer v6.0-256\bin\remote-viewer.exe"
 VV_FILE="C:\Users\Joe\Downloads\pve_spice_connect.vv"
-VNC_VIEWER="C:\Users\Joe\Downloads\vncviewer64-1.9.0.exe"
+VNC_VIEWER="C:\Users\Joe\Downloads\vncviewer64-1.12.0.exe"
 NODE_USER="joe"
 NODE_NAME="pve"
 NODE_HOSTNAME="pve.local"
