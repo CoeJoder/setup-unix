@@ -4,10 +4,10 @@
 ##                  features for convenience.  Intended to be run from a recent version of WSL/Ubuntu.
 ## author:          Joe Nasca
 ## date:            8/13/2018
-## version:         0.3
-REMOTE_VIEWER="C:\Program Files\VirtViewer v6.0-256\bin\remote-viewer.exe"
+## version:         0.4
+REMOTE_VIEWER="C:\Program Files\VirtViewer v11.0-256\bin\remote-viewer.exe"
 VV_FILE="C:\Users\Joe\Downloads\pve_spice_connect.vv"
-VNC_VIEWER="C:\Users\Joe\Downloads\vncviewer64-1.12.0.exe"
+VNC_VIEWER="C:\Users\joe\Downloads\vncviewer64-1.13.1.exe"
 NODE_USER="joe"
 NODE_NAME="pve"
 NODE_HOSTNAME="pve.local"
@@ -92,7 +92,9 @@ elif ([[ "$_twoArgs" == 0 ]] || [[ "$_isSet" == 0 ]]); then
             _baseUrl="https://${NODE_HOSTNAME}:${NODE_PORT}/?console=kvm&novnc=1&vmid=${_vmid}&vmname=${_vmName}&node=${NODE_NAME}&resize=off&cmd="
             _uriEncodedTicket="$(ssh -n $SSH_HOST "sudo pvesh create /access/ticket --username=${NODE_USER}@pam --password=${password} --output-format json-pretty" \
                 | jq -r '.ticket|@uri')"
-            wslview "${_baseUrl}&PVEAuthCookie=${_uriEncodedTicket}"
+            #wslview "${_baseUrl}&PVEAuthCookie=${_uriEncodedTicket}"
+            # WORKAROUND until `wslview` bug is fixed: https://github.com/wslutilities/wslu/issues/268
+            "$(wslpath "C:\Program Files\Mozilla Firefox\firefox.exe")" -P "joe2" -url "${_baseUrl}&PVEAuthCookie=${_uriEncodedTicket}" &>/dev/null &
         elif [[ "$_command" == vnc ]]; then
             _wpVncViewer="$(wslpath -u "$VNC_VIEWER")"
             if [[ ! -f "$_wpVncViewer" ]]; then
