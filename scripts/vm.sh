@@ -2,7 +2,7 @@
 ## title:           vm.sh
 ## description:     A remote control script for Proxmox's QEMU server, with some additional
 ##                  features for convenience.  Intended to be run from a recent version of WSL/Ubuntu.
-## author:          Joe Nasca
+## author:          CoeJoder
 ## date:            8/13/2018
 ## version:         0.4
 REMOTE_VIEWER="C:\Program Files\VirtViewer v11.0-256\bin\remote-viewer.exe"
