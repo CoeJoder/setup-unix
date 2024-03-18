@@ -110,6 +110,7 @@ sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
 # setup neovim plugins
 nvim
 :UpdateRemotePlugins
+:TransparentEnable
 
 # setup X fonts
 sudo apt install -y xfonts-base xfonts-scalable
