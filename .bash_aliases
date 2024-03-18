@@ -1,3 +1,9 @@
+# n installs node and npm
+export N_PREFIX="$HOME/.local"
+
+# disable terminal audio beeps
+bind 'set bell-style none'
+
 # slightly safer rm
 alias rm='rm -I'
 

@@ -92,7 +92,7 @@ elif ([[ "$_twoArgs" == 0 ]] || [[ "$_isSet" == 0 ]]); then
             _baseUrl="https://${NODE_HOSTNAME}:${NODE_PORT}/?console=kvm&novnc=1&vmid=${_vmid}&vmname=${_vmName}&node=${NODE_NAME}&resize=off&cmd="
             _uriEncodedTicket="$(ssh -n $SSH_HOST "sudo pvesh create /access/ticket --username=${NODE_USER}@pam --password=${password} --output-format json-pretty" \
                 | jq -r '.ticket|@uri')"
-            #wslview "${_baseUrl}&PVEAuthCookie=${_uriEncodedTicket}"
+            #wslview -s "${_baseUrl}&PVEAuthCookie=${_uriEncodedTicket}"
             # WORKAROUND until `wslview` bug is fixed: https://github.com/wslutilities/wslu/issues/268
             "$(wslpath "C:\Program Files\Mozilla Firefox\firefox.exe")" -P "joe2" -url "${_baseUrl}&PVEAuthCookie=${_uriEncodedTicket}" &>/dev/null &
         elif [[ "$_command" == vnc ]]; then
