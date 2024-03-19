@@ -31,19 +31,33 @@ Package: *
 Pin: origin packages.mozilla.org
 Pin-Priority: 1000
 ' | sudo tee /etc/apt/preferences.d/mozilla
-sudo apt update && sudo apt install firefox
+sudo apt update -y && sudo apt install -y firefox
 
 # copy Firefox profiles over
 # see: https://support.mozilla.org/en-US/kb/recovering-important-data-from-an-old-profile#w_bookmarks-downloads-and-browsing-history
 
-# for Razer Blade, install OpenRazer stuff with --install-suggests
-# see website for distro-specific instructions
+# install vendor-specific drivers
+# e.g. for a Razer Blade, install OpenRazer packages:
+# see: https://openrazer.github.io/#ubuntu
+sudo apt install -y software-properties-gtk
+sudo add-apt-repository ppa:openrazer/stable
+sudo add-apt-repository ppa:openrazer/daily
+sudo apt update
+sudo apt install --install-suggests -y openrazer-meta
 
-# install KeepassXC via PPA
+# install KeepassXC
+sudo add-apt-repository ppa:phoerious/keepassxc
+sudo apt update
+sudo apt install -y keepassxc
+# import your KeepassXC db file
 
-# copy ~/KeepassXC folder
+# install pipx
+sudo apt update
+sudo apt install -y pipx
+pipx ensurepath
 
-# install ytp-dlp (youtube downloader) from PPA
+# install ytp-dlp
+pipx install yt-dlp[default]
 
 # copy SSH keys to .ssh and then:
 mkdir ~/.ssh/sockets
@@ -60,33 +74,60 @@ fc-list | grep "FiraCode Nerd Font Mono"
 curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
 echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
 sudo apt upgrade
-sudo apt install wezterm-nightly
+sudo apt install -y wezterm-nightly
 sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/open-wezterm-here 60
 
 # install git
-sudo apt install git
+sudo apt install -y git
 
 # install BeyondCompare
 wget https://www.scootersoftware.com/files/bcompare-4.4.7.28397_amd64.deb -P ~/Downloads
 sudo apt update
-sudo apt install ~/Downloads/bcompare-4.4.7.28397_amd64.deb
+sudo apt install -y ~/Downloads/bcompare-4.4.7.28397_amd64.deb
 
 # for HP multifunction printer, install universal driver & app
 sudo gpasswd -a joe lp
 sudo gpasswd -a joe lpadmin
-sudo apt install hplip
+sudo apt install -y hplip
 hp-setup
 
+# setup git site-user project dir structure
+# IMPORTANT: set GITHUB_USER to your main github username
+GITHUB_USER=CoeJoder
+GITHUB_PROJ_DIR="~/projects/github/$GITHUB_USER"
+mkdir -p $GITHUB_PROJ_DIR
+
 # setup dotfiles
-git clone --recurse-submodules git@github.com:CoeJoder/setup-unix.git ~/setup-unix
-cd ~/setup-unix
+git clone --recurse-submodules git@github.com:CoeJoder/setup-unix.git $GITHUB_PROJ_DIR/setup-unix
+pushd $GITHUB_PROJ_DIR/setup-unix
 git submodule update --init --recursive
-# This WILL overwrite existing files; please make a backup
-# if you care about your existing config!
-rsync -avh ~/setup-unix/ ~
+
+# IMPORTANT: edit/rename `.config/git/config.github.CoeJoder` to `.config/git/config.github.[your-main-github-user]`
+# Optional: add any additional `.config/git/config.[site].[user]`
+
+# IMPORTANT: edit `.config/git/config` and change paths as needed
+# Optional: add any additional entries such as:
+#   [includeIf "gitdir:~/projects/[site]/[user]/**"]
+#     path = ~/.config/git/config.[site].[user]
+
+# NOTE: when checking out git projects, the SSH user creds will be chosen based on gitdir,
+# but this also requires local address-rewriting.  To make this work, follow these guidelines:
+#
+#   - Clone projects into `~/projects/[site]/[user]/[project]`
+#   - When cloning, instead of:
+#       `git clone [gitssh-endpoint]:[remote-user]/[project].git`
+#     Do:
+#       `git clone [site]_[user]:[remote-user]/[project].git ~/projects/[site]/[user]/[project]`
+#   - Example:
+#       `git clone github_CoeJoder:torvalds/linux.git ~/projects/github/CoeJoder/linux`
+
+# deploy dotfiles
+# IMPORTANT: This WILL overwrite existing files; backup recommended.
+rsync -avh $GITHUB_PROJ_DIR/setup-unix ~
+popd
 
 # install Node, Python3, & misc utils
-sudo apt install tmux python3-pip pipx python3-pynvim
+sudo apt install -y tmux python3-pip pipx python3-pynvim
 n lts
 npm_g install
 npm_g audit fix
@@ -94,8 +135,10 @@ npm_g uninstall avn avn-nvm avn-n
 
 # install syntax highlighter for `less`
 # see: https://github.com/CoeJoder/lessfilter-pygmentize
-sudo apt install gawk
-pipx install --upgrade Pygments
+sudo apt install -y gawk
+pipx install Pygments
+# if already installed:
+pipx upgrade Pygments
 
 # install neovim
 # see: https://github.com/neovim/neovim/blob/master/INSTALL.md#appimage-universal-linux-package

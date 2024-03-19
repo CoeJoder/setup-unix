@@ -31,6 +31,8 @@
 !.config/
 .config/*
 !.config/nvim/
+!.config/git/config
+!.config/git/config.github.CoeJoder
 
 !.local/
 .local/*

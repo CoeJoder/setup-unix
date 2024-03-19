@@ -1,12 +1,10 @@
-# Optional: move config to ~/.config/git/config.github.CoeJoder
-# to allow for multiuser configuration
+# abstract base configs for a github user
 
-# This is Git's per-user configuration file.
+# [user] section moved to `~/.config/git/config.github.CoeJoder`
+# to allow for dir-based, per-site, per-user config
+
 [push]
     default = simple
-[user]
-    name = CoeJoder
-    email = CoeJoder@users.noreply.github.com
 [credential]
     helper = cache --timeout=3600
 [core]
