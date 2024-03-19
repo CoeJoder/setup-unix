@@ -31,6 +31,7 @@
 !.config/
 .config/*
 !.config/nvim/
+!.config/git/
 !.config/git/config
 !.config/git/config.github.CoeJoder
 
