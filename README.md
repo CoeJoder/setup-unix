@@ -15,7 +15,6 @@ bash for the shell, all set up using the configurations in this repo.
 
 ### Usage
 
-#### Preparation
 ```bash
 # update/upgrade
 sudo apt update -y && sudo apt upgrade -y

@@ -99,6 +99,7 @@ export PYGMENTIZE_STYLE='paraiso-dark'
 
 GIT_PROMPT_THEME="Custom"
 GIT_PROMPT_ONLY_IN_REPO=0
+GIT_PROMPT_FETCH_REMOTE_STATUS=0
 source ~/.bash-git-prompt/gitprompt.sh
 
 # Add an "alert" alias for long running commands.  Use like so:
