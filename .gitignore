@@ -26,6 +26,7 @@
 !.tmux.conf
 !.tmux.darwin.conf
 
+!.wezterm.lua
 !.vim
 !.vimrc
 !.config/
