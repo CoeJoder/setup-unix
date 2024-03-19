@@ -125,7 +125,7 @@ git submodule update --init --recursive
 # IMPORTANT: This WILL overwrite existing files; backup recommended.
 rsync -avh $GITHUB_PROJ_DIR/setup-unix ~
 # Or use the deploy script which also substitutes private configs
-./scripts/deploy_setup_unix-UbuntuDesktop_23_10.sh
+./scripts/deploy_setup_unix.sh
 popd
 
 # install Node, Python3, & misc utils
