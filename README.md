@@ -121,10 +121,8 @@ git submodule update --init --recursive
 #   - Example:
 #       `git clone github_CoeJoder:torvalds/linux.git ~/projects/github/CoeJoder/linux`
 
-# deploy dotfiles
+# deploy dotfiles & substitute private configs
 # IMPORTANT: This WILL overwrite existing files; backup recommended.
-rsync -avh $GITHUB_PROJ_DIR/setup-unix ~
-# Or use the deploy script which also substitutes private configs
 ./scripts/deploy_setup_unix.sh
 popd
 

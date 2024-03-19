@@ -6,7 +6,7 @@ if [ ~ -ef $PROJ_DIR ]; then
     printf "This script is intended to be run from the cloned dir, not the deployment destination.\nExiting...\n"
 else
     echo "Deploying the dotfiles..."
-    rsync -avh $PROJ_DIR/ ~
+    rsync -avh --exclude=.git --exclude=scripts/deploy_setup_unix.sh $PROJ_DIR/ ~
 
     echo "Overriding with private configs..."
     GIT_CONFIG=~/.config/git/config
