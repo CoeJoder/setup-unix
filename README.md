@@ -110,7 +110,7 @@ git submodule update --init --recursive
 #   [includeIf "gitdir:~/projects/[site]/[user]/**"]
 #     path = ~/.config/git/config.[site].[user]
 
-# NOTE: when checking out git projects, the SSH user creds will be chosen based on gitdir,
+# NOTE: when cloning projects, the SSH user creds will be chosen based on gitdir,
 # but this also requires local address-rewriting.  To make this work, follow these guidelines:
 #
 #   - Clone projects into `~/projects/[site]/[user]/[project]`
@@ -124,6 +124,8 @@ git submodule update --init --recursive
 # deploy dotfiles
 # IMPORTANT: This WILL overwrite existing files; backup recommended.
 rsync -avh $GITHUB_PROJ_DIR/setup-unix ~
+# Or use the deploy script which also substitutes private configs
+./scripts/deploy_setup_unix-UbuntuDesktop_23_10.sh
 popd
 
 # install Node, Python3, & misc utils
