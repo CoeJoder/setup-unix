@@ -48,14 +48,6 @@ sudo apt update && sudo apt install firefox
 # copy SSH keys to .ssh and then:
 mkdir ~/.ssh/sockets
 
-# install pygments
-# global installs with pip are more complex now, below commands need editing
-sudo apt autoremove python-pygments python3-pygments
-sudo pip install Pygments --upgrade
-
-# TODO install .lessfilter incl. .bashrc changes
-# (already done but need to fill out instructions)
-
 # install FiraMonoNerdFont
 wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/FiraMono.zip -P ~/Downloads
 unzip ~/Downloads/FiraMono.zip -d ~/.fonts/FiraMonoNerdFont
@@ -100,8 +92,13 @@ npm_g install
 npm_g audit fix
 npm_g uninstall avn avn-nvm avn-n
 
+# install syntax highlighter for `less`
+# see: https://github.com/CoeJoder/lessfilter-pygmentize
+sudo apt install gawk
+pipx install --upgrade Pygments
+
 # install neovim
-# TODO insert instructions for installing via .appimage
+# see: https://github.com/neovim/neovim/blob/master/INSTALL.md#appimage-universal-linux-package
 sudo update-alternatives --install /usr/bin/vi vi /usr/bin/nvim 60
 sudo update-alternatives --install /usr/bin/vim vim /usr/bin/nvim 60
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
