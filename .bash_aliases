@@ -60,7 +60,6 @@ npm_g() {
 # VM convenience method
 vm() {
     (/bin/bash ~/scripts/vm.sh $@)
-    #ssh joe@pve.local "/bin/bash -s -- $@" < ~/scripts/vm.sh
 }
 
 # VM bash autocompletion
