@@ -56,7 +56,7 @@
 !scripts
 scripts/*
 !scripts/vm.sh
-!scripts/deploy_setup_unix-UbuntuDesktop_23_10.sh
+!scripts/deploy_setup_unix.sh
 
 !.ssh
 .ssh/*
