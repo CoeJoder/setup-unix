@@ -86,8 +86,8 @@ sudo apt update
 sudo apt install -y ~/Downloads/bcompare-4.4.7.28397_amd64.deb
 
 # for HP multifunction printer, install universal driver & app
-sudo gpasswd -a joe lp
-sudo gpasswd -a joe lpadmin
+sudo gpasswd -a $USER lp
+sudo gpasswd -a $USER lpadmin
 sudo apt install -y hplip
 hp-setup
 
