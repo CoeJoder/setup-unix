@@ -67,8 +67,8 @@ wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/FiraMono.z
 unzip ~/Downloads/FiraMono.zip -d ~/.fonts/FiraMonoNerdFont
 fc-cache -fv
 
-# verify FiraCodeNerdFont installation
-fc-list | grep "FiraCode Nerd Font Mono"
+# verify FiraMonoNerdFont installation
+fc-list | grep "FiraMono Nerd Font Mono"
 
 # install wezterm
 curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
