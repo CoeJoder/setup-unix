@@ -1,0 +1,34 @@
+# ~/.profile: executed by the command interpreter for login shells.
+# This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login
+# exists.
+# see /usr/share/doc/bash/examples/startup-files for examples.
+# the files are located in the bash-doc package.
+
+# the default umask is set in /etc/profile; for setting the umask
+# for ssh logins, install and configure the libpam-umask package.
+#umask 022
+
+# As ~/.profile is provided by default in Mint, `setup-unix (Mint)` provides
+# it too, in addition to ~/.bash_profile.  The latter sources this file.
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+# set PATH so it includes custom globally-installed node modules
+if [ -d "$HOME/.npm_global/node_modules/.bin" ] ; then
+    PATH="$HOME/.npm_global/node_modules/.bin:$PATH"
+fi
+
+# set up the n Node version manager
+if [ -x "$HOME/.n/bin/n" ] ; then
+    export N_PREFIX="$HOME/.local"
+    PATH="$HOME/.n/bin:$PATH"
+fi
+

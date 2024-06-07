@@ -1,0 +1,17 @@
+# files excluded from deployment
+
+# top-level project files
+/LICENSE
+/README.md
+/.setup-unix.png
+/scripts/deploy_setup_unix.sh
+/scripts/excludes.txt
+
+# git files
+.gitconfig
+.gitignore
+.gitignore_global
+.gitmodules
+.gitattributes
+.git
+

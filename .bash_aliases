@@ -12,8 +12,18 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 
-# use absolute paths for wsltty UI features e.g. ctrl+click paths
-set -P
+# interpret color characters
+export LESS='-R'
+export PYGMENTIZE_STYLE='paraiso-dark'
+
+# sometimes needed for X forwarding over SSH
+#export DISPLAY=localhost:0
+
+# git-aware bash prompt
+GIT_PROMPT_THEME="Custom"
+GIT_PROMPT_ONLY_IN_REPO=0
+GIT_PROMPT_FETCH_REMOTE_STATUS=0
+source ~/.bash-git-prompt/gitprompt.sh
 
 # ensure agent is running
 # see: https://stackoverflow.com/a/48509425/159570

@@ -6,13 +6,13 @@ if [ ~ -ef $PROJ_DIR ]; then
     printf "This script is intended to be run from the cloned dir, not the deployment destination.\nExiting...\n"
 else
     echo "Deploying the dotfiles..."
-    rsync -avh --exclude=.git --exclude=scripts/deploy_setup_unix.sh $PROJ_DIR/ ~
+    rsync -avh --exclude-from="$SCRIPT_DIR/excludes.txt" $PROJ_DIR/ ~
 
     echo "Overriding with private configs..."
     GIT_CONFIG=~/.config/git/config
     GIT_CONFIG_PRIV=${GIT_CONFIG}.priv
     if [ -f $GIT_CONFIG_PRIV ]; then
-        cp -v $GIT_CONFIG_PRIV $GIT_CONFIG
+        rsync -tgovh $GIT_CONFIG_PRIV $GIT_CONFIG
     else
         echo "$GIT_CONFIG_PRIV not found, skipping..."
     fi

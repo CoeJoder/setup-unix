@@ -13,8 +13,8 @@
 !.gitconfig
 !.gitmodules
 
+!.profile
 !.bash_profile
-!.bash_profile.darwin.sh
 !.bashrc
 !.bashrc_skip_tmux
 !.bash_color_prompt.sh
@@ -24,7 +24,6 @@
 !.inputrc
 
 !.tmux.conf
-!.tmux.darwin.conf
 
 !.wezterm.lua
 !.vim
@@ -59,6 +58,7 @@
 scripts/*
 !scripts/vm.sh
 !scripts/deploy_setup_unix.sh
+!scripts/excludes.txt
 
 !.ssh
 .ssh/*

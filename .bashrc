@@ -1,6 +1,7 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -19,8 +20,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=2000
+HISTFILESIZE=3000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -90,17 +91,6 @@ fi
 
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-# interpret color characters
-export LESS='-R'
-export PYGMENTIZE_STYLE='paraiso-dark'
-
-#export DISPLAY=localhost:0
-
-GIT_PROMPT_THEME="Custom"
-GIT_PROMPT_ONLY_IN_REPO=0
-GIT_PROMPT_FETCH_REMOTE_STATUS=0
-source ~/.bash-git-prompt/gitprompt.sh
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert

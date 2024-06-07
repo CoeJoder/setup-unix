@@ -1,5 +1,5 @@
-# setup-unix: Ubuntu Desktop 23.10
-My standard setup on Ubuntu Desktop 23.10.
+# setup-unix: Linux Mint 21.3
+My standard setup on Linux Mint 21.3
 
 ### Preview
 
@@ -22,17 +22,6 @@ sudo apt update -y && sudo apt upgrade -y
 # set timezone
 sudo timedatectl set-timezone America/Los_Angeles
 
-# install firefox from Mozilla's DEB repo
-# see: https://www.omgubuntu.co.uk/2022/04/how-to-install-firefox-deb-apt-ubuntu-22-04
-wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
-echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | sudo tee -a /etc/apt/sources.list.d/mozilla.list > /dev/null
-echo '
-Package: *
-Pin: origin packages.mozilla.org
-Pin-Priority: 1000
-' | sudo tee /etc/apt/preferences.d/mozilla
-sudo apt update -y && sudo apt install -y firefox
-
 # copy Firefox profiles over
 # see: https://support.mozilla.org/en-US/kb/recovering-important-data-from-an-old-profile#w_bookmarks-downloads-and-browsing-history
 
@@ -41,20 +30,23 @@ sudo apt update -y && sudo apt install -y firefox
 # see: https://openrazer.github.io/#ubuntu
 sudo apt install -y software-properties-gtk
 sudo add-apt-repository ppa:openrazer/stable
-sudo add-apt-repository ppa:openrazer/daily
-sudo apt update
-sudo apt install --install-suggests -y openrazer-meta
+sudo apt update -y && sudo apt install --install-suggests -y openrazer-meta
 
 # install KeepassXC
-sudo add-apt-repository ppa:phoerious/keepassxc
-sudo apt update
-sudo apt install -y keepassxc
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak install --user flathub org.keepassxc.KeePassXC
 # import your KeepassXC db file
 
-# install pipx
-sudo apt update
-sudo apt install -y pipx
-pipx ensurepath
+# install neovim
+sudo add-apt-repository ppa:neovim-ppa/stable
+sudo apt update -y && sudo apt install neovim
+sudo update-alternatives --install /usr/bin/vi vi /usr/bin/nvim 60
+sudo update-alternatives --install /usr/bin/vim vim /usr/bin/nvim 60
+sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
+
+# install tmux, pipx, pynvim, gawk
+sudo apt install -y tmux pipx python3-pynvim gawk
+# (no need to run `pipx ensurepath`, it's already set in ~/.profile)
 
 # install ytp-dlp
 pipx install yt-dlp[default]
@@ -63,7 +55,8 @@ pipx install yt-dlp[default]
 mkdir ~/.ssh/sockets
 
 # install FiraMonoNerdFont
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/FiraMono.zip -P ~/Downloads
+wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/FiraMono.zip -P ~/Downloads
+mkdir -p ~/.fonts
 unzip ~/Downloads/FiraMono.zip -d ~/.fonts/FiraMonoNerdFont
 fc-cache -fv
 
@@ -73,23 +66,21 @@ fc-list | grep "FiraMono Nerd Font Mono"
 # install wezterm
 curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
 echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
-sudo apt upgrade
-sudo apt install -y wezterm-nightly
-sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/open-wezterm-here 60
+sudo apt update -y && sudo apt install -y wezterm
+# below command doesn't seem to work in Mint. Set in "Preferred Applications" instead.
+#sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/open-wezterm-here 60
 
 # install git
 sudo apt install -y git
 
 # install BeyondCompare
 wget https://www.scootersoftware.com/files/bcompare-4.4.7.28397_amd64.deb -P ~/Downloads
-sudo apt update
-sudo apt install -y ~/Downloads/bcompare-4.4.7.28397_amd64.deb
+sudo apt update -y && sudo apt install -y ~/Downloads/bcompare-4.4.7.28397_amd64.deb
 
-# for HP multifunction printer, install universal driver & app
+# set static IP for printer and test using driverless printing/scanning
+# see: https://forums.linuxmint.com/viewtopic.php?p=1663963#p1663963
 sudo gpasswd -a $USER lp
 sudo gpasswd -a $USER lpadmin
-sudo apt install -y hplip
-hp-setup
 
 # setup git site-user project dir structure
 # IMPORTANT: set GITHUB_USER to your main github username
@@ -126,62 +117,23 @@ git submodule update --init --recursive
 ./scripts/deploy_setup_unix.sh
 popd
 
-# install Node, Python3, & misc utils
-sudo apt install -y tmux python3-pip pipx python3-pynvim
+# setup NodeJS
 n lts
 npm_g install
-npm_g audit fix
-npm_g uninstall avn avn-nvm avn-n
 
 # install syntax highlighter for `less`
-# see: https://github.com/CoeJoder/lessfilter-pygmentize
-sudo apt install -y gawk
 pipx install Pygments
 # if already installed:
 pipx upgrade Pygments
-
-# install neovim
-# see: https://github.com/neovim/neovim/blob/master/INSTALL.md#appimage-universal-linux-package
-sudo update-alternatives --install /usr/bin/vi vi /usr/bin/nvim 60
-sudo update-alternatives --install /usr/bin/vim vim /usr/bin/nvim 60
-sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
 
 # setup neovim plugins
 nvim
 :UpdateRemotePlugins
 :TransparentEnable
-
-# setup X fonts
-sudo apt install -y xfonts-base xfonts-scalable
-
-# IMPORTANT: modify all the following files with your own name/email:
-#   In `.gitconfig`:
-#     `name` and `email` should have your own name and email.
+# the previous command may give innocuous error message;
+# restart neovim to see if transparency is working
 
 # reboot
 sudo reboot
-```
-
-### Notes
-
-Some personal configuration/state is often contained in these configuration
-files (e.g. npm logins stored in .npmrc). To prevent yourself from accidentally
-adding these to the repo, try:
-
-```sh
-git update-index --assume-unchanged <path>
-```
-
-To start automatically checking for changes again:
-
-```sh
-git update-index --no-assume-unchanged <path>
-```
-
-To show all files being tracked (`assume-unchanged` files are marked with `h`,
-instead of the normal `H`):
-
-```sh
-git ls-files -v
 ```
 
