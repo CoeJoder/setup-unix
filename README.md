@@ -19,9 +19,6 @@ bash for the shell, all set up using the configurations in this repo.
 # update/upgrade
 sudo apt update -y && sudo apt upgrade -y
 
-# set timezone
-sudo timedatectl set-timezone America/Los_Angeles
-
 # copy Firefox profiles over
 # see: https://support.mozilla.org/en-US/kb/recovering-important-data-from-an-old-profile#w_bookmarks-downloads-and-browsing-history
 
@@ -47,9 +44,6 @@ sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
 # install tmux, pipx, pynvim, gawk
 sudo apt install -y tmux pipx python3-pynvim gawk
 # (no need to run `pipx ensurepath`, it's already set in ~/.profile)
-
-# install ytp-dlp
-pipx install yt-dlp[default]
 
 # copy SSH keys to .ssh and then:
 mkdir ~/.ssh/sockets
@@ -77,6 +71,10 @@ sudo apt install -y git
 wget https://www.scootersoftware.com/files/bcompare-4.4.7.28397_amd64.deb -P ~/Downloads
 sudo apt update -y && sudo apt install -y ~/Downloads/bcompare-4.4.7.28397_amd64.deb
 
+# install Joplin using the suggested method (same script updates the .appimage if present)
+# https://joplinapp.org/help/install/
+# import data, or copy old `joplin-desktop` directory to ~/.config/
+
 # set static IP for printer and test using driverless printing/scanning
 # see: https://forums.linuxmint.com/viewtopic.php?p=1663963#p1663963
 sudo gpasswd -a $USER lp
@@ -91,6 +89,9 @@ mkdir -p $GITHUB_PROJ_DIR
 # setup dotfiles
 git clone --recurse-submodules git@github.com:CoeJoder/setup-unix.git $GITHUB_PROJ_DIR/setup-unix
 pushd $GITHUB_PROJ_DIR/setup-unix
+# list branches, switch to Mint branch, init submodules
+git branch -a
+git checkout Mint21_3
 git submodule update --init --recursive
 
 # IMPORTANT: edit/rename `.config/git/config.github.CoeJoder` to `.config/git/config.github.[your-main-github-user]`
@@ -121,7 +122,13 @@ popd
 n lts
 npm_g install
 
-# install syntax highlighter for `less`
+# install pipenv
+pip install pipenv --user
+
+# install ytp-dlp
+pipx install yt-dlp[default]
+
+# install Pygments
 pipx install Pygments
 # if already installed:
 pipx upgrade Pygments
@@ -133,7 +140,19 @@ nvim
 # the previous command may give innocuous error message;
 # restart neovim to see if transparency is working
 
+# install BackInTime
+sudo add-apt-repository ppa:bit-team/stable
+sudo apt update -y && sudo apt install -y backintime-qt
+
+# enable Firewall (default "Home" profile)
+
 # reboot
 sudo reboot
+
+# verify settings are applied
+# setup Timeshift snapshots, 1/day, with default excludes
+# setup BackInTime snapshots, 1/day, with default excludes
+# setup Foxclone imaging
+# test the Foxclone image on a VM
 ```
 

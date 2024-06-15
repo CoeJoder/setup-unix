@@ -1,0 +1,30 @@
+#
+# user-defined bash completions
+# see: https://github.com/scop/bash-completion#faq
+#
+
+# pipx
+have pipx &&
+    eval "$(register-python-argcomplete3 pipx)"
+
+# VM hypervisor client
+vm() {
+    (/bin/bash ~/scripts/vm.sh $@)
+}
+
+_vm_autocomplete() {
+    local cur all_options vms
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    all_options="start shutdown reset suspend resume stop status vnc spice listvms"
+
+    if [[ "${COMP_CWORD}" == 1 ]]; then
+        COMPREPLY=( $(compgen -W "${all_options}" -- ${cur}) )
+        return 0
+    elif [[ "${COMP_CWORD}" == 2 ]]; then
+        vms="$(vm listvms)"
+        COMPREPLY=( $(compgen -W "${vms}" -- ${cur}) )
+        return 0
+    fi
+}
+complete -F _vm_autocomplete vm

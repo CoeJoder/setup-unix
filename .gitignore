@@ -19,6 +19,7 @@
 !.bashrc_skip_tmux
 !.bash_color_prompt.sh
 !.bash_aliases
+!.bash_completion
 !.lessfilter
 !.git-prompt-colors.sh
 !.inputrc
