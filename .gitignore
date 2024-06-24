@@ -58,6 +58,7 @@
 !scripts
 scripts/*
 !scripts/vm.sh
+!scripts/new_drive_test.sh
 !scripts/deploy_setup_unix.sh
 !scripts/excludes.txt
 
