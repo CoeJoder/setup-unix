@@ -11,6 +11,7 @@ if [[ ! $BLOCKSIZE =~ ^[0-9]+$ ]]; then
 	exit 1
 fi
 echo "Block size of $DISK detected as $BLOCKSIZE B"
-read -p "Continue with destructive r/w test? (y/N): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+read -p "Continue with destructive r/w test? (y/N): " confirm && \
+    [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
 sudo badblocks -wsvb $BLOCKSIZE $DISK
 
