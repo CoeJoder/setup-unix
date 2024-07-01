@@ -69,12 +69,60 @@ npm_g() {
 
 # kill all tmux session except the current one
 tmux_killall() {
-    tmux list-sessions | grep -v attached | awk 'BEGIN{FS=":"}{print $1}' | xargs -n 1 tmux kill-session -t || echo No sessions to kill
+    tmux list-sessions | grep -v attached | awk 'BEGIN{FS=":"}{print $1}' | \
+        xargs -n 1 tmux kill-session -t || echo No sessions to kill
 }
 
 # print the external IP address to stdout
 whatismyip() {
     echo "$(curl -kLs https://ipinfo.io/ip)"
+}
+
+# fetch and pygmentize a URL document to stdout
+pyget() {
+    local PYG_PYTHON="$HOME/.local/pipx/venvs/pygments/bin/python"
+    if [[ ! -f $PYG_PYTHON ]] ; then
+        echo "Not found: $PYG_PYTHON" >&2
+        return 1
+    fi
+    if ! type -P wget >/dev/null 2>&1; then
+        echo "Command 'wget' not found" >&2
+        return 1
+    fi
+    if [[ ! -v PYGMENTIZE_STYLE ]] ; then
+        echo "PYGMENTIZE_STYLE not set" >&2
+        return 1
+    fi
+    if [[ $# -ne 1 ]] ; then
+        echo "usage: pyget url" >&2
+        return 1
+    fi
+    local URL="$1"
+    (
+        set -euo pipefail
+        wget -q --show-progress -O - "$URL" | \
+        "$PYG_PYTHON" "$HOME/scripts/pyget.py" "$URL" "$PYGMENTIZE_STYLE"
+    )
+}
+
+# fetch and pygmentize a URL document to less
+lessget() {
+    if [[ $# -lt 1 ]] ; then
+        echo "usage: lessget [LESS_OPTIONS] url" >&2
+        return 1
+    fi
+    if [[ $# -gt 1 ]] ; then
+        local LESS_OPTIONS="${@: 1:$#-1}"
+    fi
+    local URL="${@: -1}"
+    # use a temp file to handle large docs
+    (
+        set -eo pipefail
+        TEMPFILE=$(mktemp)
+        trap "rm -f ${TEMPFILE@Q}" EXIT
+        pyget "$URL" > "$TEMPFILE"
+        less $LESS_OPTIONS "$TEMPFILE"
+    )
 }
 
 # start tmux with the current environment
