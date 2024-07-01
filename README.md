@@ -1,7 +1,7 @@
 # setup-unix: Linux Mint 21.3
-My standard setup on Linux Mint 21.3
+My setup on Linux Mint 21.3
 
-### Preview
+## Preview
 
 ![Preview](./.setup-unix.png)
 
@@ -13,7 +13,7 @@ The programs being run are [tmux](https://github.com/tmux/tmux) for multiplexing
 the various shells, [neovim](https://github.com/neovim/neovim) for editing, and
 bash for the shell, all set up using the configurations in this repo.
 
-### Usage
+## Setup
 
 ```bash
 # update/upgrade
@@ -26,7 +26,7 @@ sudo apt update -y && sudo apt upgrade -y
 # e.g. for a Razer Blade, install OpenRazer packages:
 # see: https://openrazer.github.io/#ubuntu
 sudo apt install -y software-properties-gtk
-sudo add-apt-repository ppa:openrazer/stable
+sudo add-apt-repository -y ppa:openrazer/stable
 sudo apt update -y && sudo apt install --install-suggests -y openrazer-meta
 
 # install KeepassXC
@@ -35,15 +35,22 @@ flatpak install --user flathub org.keepassxc.KeePassXC
 # import your KeepassXC db file
 
 # install neovim
-sudo add-apt-repository ppa:neovim-ppa/stable
-sudo apt update -y && sudo apt install neovim
+sudo add-apt-repository -y ppa:neovim-ppa/stable
+sudo apt update -y && sudo apt install -y neovim
 sudo update-alternatives --install /usr/bin/vi vi /usr/bin/nvim 60
 sudo update-alternatives --install /usr/bin/vim vim /usr/bin/nvim 60
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
 
-# install tmux, pipx, pynvim, gawk
-sudo apt install -y tmux pipx python3-pynvim gawk
+# install tmux, pipx, pynvim, gawk, git
+sudo apt install -y tmux pipx python3-pynvim gawk git
 # (no need to run `pipx ensurepath`, it's already set in ~/.profile)
+
+# install ytp-dlp, Pygments
+pipx install yt-dlp[default]
+pipx install Pygments
+
+# install pipenv
+pip install pipenv --user
 
 # copy SSH keys to .ssh and then:
 mkdir ~/.ssh/sockets
@@ -64,14 +71,14 @@ sudo apt update -y && sudo apt install -y wezterm
 # below command doesn't seem to work in Mint. Set in "Preferred Applications" instead.
 #sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/open-wezterm-here 60
 
-# install git
-sudo apt install -y git
+# install vscodium
+# see: https://vscodium.com/#use-a-package-manager-deb-rpm-provided-by-vscodium-related-repos
 
 # install BeyondCompare
 wget https://www.scootersoftware.com/files/bcompare-4.4.7.28397_amd64.deb -P ~/Downloads
 sudo apt update -y && sudo apt install -y ~/Downloads/bcompare-4.4.7.28397_amd64.deb
 
-# install Joplin using the suggested method (same script updates the .appimage if present)
+# install Joplin using the suggested method (script updates the .appimage if already present)
 # https://joplinapp.org/help/install/
 # import data, or copy old `joplin-desktop` directory to ~/.config/
 
@@ -81,7 +88,7 @@ sudo gpasswd -a $USER lp
 sudo gpasswd -a $USER lpadmin
 
 # setup git site-user project dir structure
-# IMPORTANT: set GITHUB_USER to your main github username
+# IMPORTANT: set GITHUB_USER to your main GitHub username
 GITHUB_USER=CoeJoder
 GITHUB_PROJ_DIR="~/projects/github/$GITHUB_USER"
 mkdir -p $GITHUB_PROJ_DIR
@@ -117,21 +124,11 @@ git submodule update --init --recursive
 # IMPORTANT: This WILL overwrite existing files; backup recommended.
 ./scripts/deploy_setup_unix.sh
 popd
-
+git@github.com:CoeJoder/waitForKeyElements.js.git
+git clone github_CoeJoder:CoeJoder/waitForKeyElements.js.git ~/projects/github/CoeJoder/waitForKeyElements.js
 # setup NodeJS
 n lts
 npm_g install
-
-# install pipenv
-pip install pipenv --user
-
-# install ytp-dlp
-pipx install yt-dlp[default]
-
-# install Pygments
-pipx install Pygments
-# if already installed:
-pipx upgrade Pygments
 
 # setup neovim plugins
 nvim
@@ -141,18 +138,25 @@ nvim
 # restart neovim to see if transparency is working
 
 # install BackInTime
-sudo add-apt-repository ppa:bit-team/stable
+sudo add-apt-repository -y ppa:bit-team/stable
 sudo apt update -y && sudo apt install -y backintime-qt
-
-# enable Firewall (default "Home" profile)
 
 # reboot
 sudo reboot
-
-# verify settings are applied
-# setup Timeshift snapshots, 1/day, with default excludes
-# setup BackInTime snapshots, 1/day, with default excludes
-# setup Foxclone imaging
-# test the Foxclone image on a VM
 ```
 
+## Post-setup
+
+- verify the above settings are applied
+- enable Gufw ("Firewall Configuration" app)
+  - default "Home" profile
+- setup Timeshift snapshots
+  - default includes/excludes
+  - Monthly: 1, Weekly: 1, Daily: 7
+- setup BackInTime snapshots
+  - include: /home/[user]
+  - default excludes
+  - Custom hours: 12,22
+- schedule periodic Foxclone full-disk backups
+- test restoration of Timeshift/BackInTime snapshots in a Mint VM
+- test restoration of Foxclone backup via file-to-drive clone in a VM
