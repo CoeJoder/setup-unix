@@ -59,7 +59,7 @@
 scripts/*
 !scripts/vm.sh
 !scripts/new_drive_test.sh
-!scripts/pyget.py
+!scripts/pygterminize.py
 !scripts/deploy_setup_unix.sh
 !scripts/excludes.txt
 

@@ -81,8 +81,13 @@ whatismyip() {
 # fetch and pygmentize a URL document to stdout
 pyget() {
     local PYG_PYTHON="$HOME/.local/pipx/venvs/pygments/bin/python"
+    local PYGTERMINIZE="$HOME/scripts/pygterminize.py"
     if [[ ! -f $PYG_PYTHON ]] ; then
         echo "Not found: $PYG_PYTHON" >&2
+        return 1
+    fi
+    if [[ ! -f $PYGTERMINIZE ]] ; then
+        echo "Not found: $PYGTERMINIZE" >&2
         return 1
     fi
     if ! type -P wget >/dev/null 2>&1; then
@@ -101,7 +106,7 @@ pyget() {
     (
         set -euo pipefail
         wget -q --show-progress -O - "$URL" | \
-        "$PYG_PYTHON" "$HOME/scripts/pyget.py" -u "$URL" -s "$PYGMENTIZE_STYLE"
+        "$PYG_PYTHON" "$PYGTERMINIZE" -u "$URL" -s "$PYGMENTIZE_STYLE"
     )
 }
 
