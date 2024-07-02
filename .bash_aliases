@@ -101,7 +101,7 @@ pyget() {
     (
         set -euo pipefail
         wget -q --show-progress -O - "$URL" | \
-        "$PYG_PYTHON" "$HOME/scripts/pyget.py" "$URL" "$PYGMENTIZE_STYLE"
+        "$PYG_PYTHON" "$HOME/scripts/pyget.py" -u "$URL" -s "$PYGMENTIZE_STYLE"
     )
 }
 
