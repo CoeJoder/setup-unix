@@ -78,24 +78,25 @@ whatismyip() {
     echo "$(curl -kLs https://ipinfo.io/ip)"
 }
 
-# fetch and pygmentize a URL document to stdout
-pyget() {
-    local PYG_PYTHON="$HOME/.local/pipx/venvs/pygments/bin/python"
+# terminal-only, url-aware alternative to `pygmentize` with enhanced lexer guessing
+pygterminize() {
+    local PYGMENTS_PYTHON="$HOME/.local/pipx/venvs/pygments/bin/python"
     local PYGTERMINIZE="$HOME/scripts/pygterminize.py"
-    if [[ ! -f $PYG_PYTHON ]] ; then
-        echo "Not found: $PYG_PYTHON" >&2
+    if [[ ! -f $PYGMENTS_PYTHON ]] ; then
+        echo "not found: $PYGMENTS_PYTHON" >&2
         return 1
     fi
     if [[ ! -f $PYGTERMINIZE ]] ; then
-        echo "Not found: $PYGTERMINIZE" >&2
+        echo "not found: $PYGTERMINIZE" >&2
         return 1
     fi
+    "$PYGMENTS_PYTHON" "$PYGTERMINIZE" $@
+}
+
+# fetch and pygmentize a URL document to stdout
+pyget() {
     if ! type -P wget >/dev/null 2>&1; then
-        echo "Command 'wget' not found" >&2
-        return 1
-    fi
-    if [[ ! -v PYGMENTIZE_STYLE ]] ; then
-        echo "PYGMENTIZE_STYLE not set" >&2
+        echo "command 'wget' not found" >&2
         return 1
     fi
     if [[ $# -ne 1 ]] ; then
@@ -105,8 +106,7 @@ pyget() {
     local URL="$1"
     (
         set -euo pipefail
-        wget -q --show-progress -O - "$URL" | \
-        "$PYG_PYTHON" "$PYGTERMINIZE" -u "$URL" -s "$PYGMENTIZE_STYLE"
+        wget -q --show-progress -O - "$URL" | pygterminize -u "$URL"
     )
 }
 
