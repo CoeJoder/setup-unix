@@ -5,7 +5,7 @@ if [[ -z $DISK ]]; then
 	echo "No disk specified"
 	exit 1
 fi
-BLOCKSIZE=$(lsblk -t $DISK | awk -F ' *' 'NR==2 {print $6}')
+BLOCKSIZE=$(sudo blockdev --getbsz /dev/sda)
 if [[ ! $BLOCKSIZE =~ ^[0-9]+$ ]]; then
 	echo "Invalid block size: ${BLOCKSIZE:-empty}"
 	exit 1
