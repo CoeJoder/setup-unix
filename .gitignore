@@ -31,10 +31,12 @@
 !.vimrc
 !.config/
 .config/*
-!.config/nvim/
+!.config/firejail/
+!.config/firejail/joplin.profile
 !.config/git/
 !.config/git/config
 !.config/git/config.github.CoeJoder
+!.config/nvim/
 
 !.local/
 .local/*

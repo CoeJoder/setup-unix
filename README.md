@@ -41,8 +41,8 @@ sudo update-alternatives --install /usr/bin/vi vi /usr/bin/nvim 60
 sudo update-alternatives --install /usr/bin/vim vim /usr/bin/nvim 60
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
 
-# install tmux, pipx, pynvim, gawk, git
-sudo apt install -y tmux pipx python3-pynvim gawk git
+# install tmux, pipx, pynvim, gawk, git, firetools
+sudo apt install -y tmux pipx python3-pynvim gawk git firetools
 # (no need to run `pipx ensurepath`, it's already set in ~/.profile)
 
 # install ytp-dlp, Pygments
@@ -118,14 +118,15 @@ git submodule update --init --recursive
 #     Do:
 #       `git clone [site]_[user]:[remote-user]/[project].git ~/projects/[site]/[user]/[project]`
 #   - Example:
+#       `git clone git@github.com:torvalds/linux.git`
+#       becomes:
 #       `git clone github_CoeJoder:torvalds/linux.git ~/projects/github/CoeJoder/linux`
 
 # deploy dotfiles & substitute private configs
 # IMPORTANT: This WILL overwrite existing files; backup recommended.
 ./scripts/deploy_setup_unix.sh
 popd
-git@github.com:CoeJoder/waitForKeyElements.js.git
-git clone github_CoeJoder:CoeJoder/waitForKeyElements.js.git ~/projects/github/CoeJoder/waitForKeyElements.js
+
 # setup NodeJS
 n lts
 npm_g install
@@ -136,6 +137,12 @@ nvim
 :TransparentEnable
 # the previous command may give innocuous error message;
 # restart neovim to see if transparency is working
+
+# setup joplin sandboxing
+sed -i 's|Exec=.*|Exec=/bin/bash -c "firejail --appimage --profile=joplin --nosound --env=APPIMAGELAUNCHER_DISABLE=TRUE \"$HOME/.joplin/Joplin.AppImage\""|g' ~/.local/share/applications/appimagekit-joplin.desktop
+update-desktop-database
+# start Joplin and verify that it is listed here:
+# firejail --list
 
 # install BackInTime
 sudo add-apt-repository -y ppa:bit-team/stable
