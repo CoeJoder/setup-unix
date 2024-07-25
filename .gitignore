@@ -33,6 +33,7 @@
 .config/*
 !.config/firejail/
 !.config/firejail/joplin.profile
+!.config/firejail/joplin.local
 !.config/git/
 !.config/git/config
 !.config/git/config.github.CoeJoder

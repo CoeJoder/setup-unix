@@ -1,0 +1,24 @@
+# Firejail local profile modifications for joplin
+# Description: blacklist $HOME/*, whitelist backup dir under /media
+
+#   IGNORES
+ignore disable-mnt
+
+#   NOBLACKLISTS
+noblacklist ${JOPLIN_BACKUP_DIR}
+noblacklist ${HOME}/.config/Joplin
+noblacklist ${HOME}/.config/joplin-desktop
+noblacklist ${HOME}/.config
+
+#   BLACKLISTS
+blacklist ${HOME}/*
+# `disable-mnt` sans `blacklist /media`
+blacklist /mnt
+blacklist /run/mount
+blacklist /run/media
+
+#   NOWHITELISTS
+nowhitelist ${DOWNLOADS}
+
+#   WHITELISTS
+whitelist ${JOPLIN_BACKUP_DIR}

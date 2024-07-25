@@ -1,12 +1,20 @@
-# Joplin firejail profile
-# source: https://github.com/netblue30/firejail/issues/1139#issuecomment-1956468208
-#
-# launch with:
-# firejail --appimage --profile=joplin --nosound --env=APPIMAGELAUNCHER_DISABLE=TRUE "$HOME/.joplin/Joplin.AppImage"
+# Firejail profile for joplin
+# Description: Joplin note-taking application
+# Original profile: https://github.com/netblue30/firejail/issues/1139#issuecomment-1956468208
+# My changes: minor fixes marked "[CJ]", and persistent local customizations
+# Launch command:
+#   firejail --appimage --profile=joplin --nosound "$HOME/.joplin/Joplin.AppImage"
+
+# Persistent local customizations
+include joplin.local
 
 #   NOBLACKLISTS
 noblacklist ${HOME}/.config/Electron
 noblacklist ${HOME}/.config/electron*-flag*.conf
+# [CJ]
+noblacklist ${HOME}/.config/Joplin
+noblacklist ${HOME}/.config/joplin-desktop
+noblacklist ${HOME}/.config
 
 #   ALLOW INCLUDES
 #   BLACKLISTS
@@ -66,3 +74,7 @@ private-tmp
 dbus-user filter
 dbus-user.talk org.freedesktop.Notifications
 dbus-system none
+
+#   SPECIAL OPTIONS
+# [CJ] applied to .desktop launcher by install script
+env APPIMAGELAUNCHER_DISABLE=TRUE

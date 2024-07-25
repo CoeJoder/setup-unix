@@ -96,7 +96,7 @@ mkdir -p $GITHUB_PROJ_DIR
 # setup dotfiles
 git clone --recurse-submodules git@github.com:CoeJoder/setup-unix.git $GITHUB_PROJ_DIR/setup-unix
 pushd $GITHUB_PROJ_DIR/setup-unix
-# list branches, switch to Mint branch, init submodules
+# list branches, switch to Mint21_3 branch, init submodules
 git branch -a
 git checkout Mint21_3
 git submodule update --init --recursive
@@ -139,9 +139,13 @@ nvim
 # restart neovim to see if transparency is working
 
 # setup joplin sandboxing
-sed -i 's|Exec=.*|Exec=/bin/bash -c "firejail --appimage --profile=joplin --nosound --env=APPIMAGELAUNCHER_DISABLE=TRUE \"$HOME/.joplin/Joplin.AppImage\""|g' ~/.local/share/applications/appimagekit-joplin.desktop
+# IMPORTANT set JOPLIN_BACKUP_DIR to a subdir of /media
+JOPLIN_BACKUP_DIR='/media/.../joplin'
+sed -i "s|\${JOPLIN_BACKUP_DIR}|$JOPLIN_BACKUP_DIR|g" ~/.config/firejail/joplin.local
+sed -i 's|Exec=.*|Exec=/bin/bash -c "firejail --appimage --profile=joplin --nosound "$HOME/.joplin/Joplin.AppImage""|g' ~/.local/share/applications/appimagekit-joplin.desktop
 update-desktop-database
-# start Joplin and verify that it is listed here:
+# start Joplin and set the backup directory to JOPLIN_BACKUP_DIR
+# before quitting Joplin, verify that it is listed here:
 # firejail --list
 
 # install BackInTime
