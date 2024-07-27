@@ -121,24 +121,25 @@ function choose_from_menu() {
     printf -v $outvar "${options[$cur]}"
 }
 
-# given a gitssh-endpoint, clones a git repo using gitdir-ssh mapping/rewriting
+# given a gitssh endpoint, clones the repo according to gitdir/ssh-user mappings
 gitssh-clone() {
+    local git_config="$HOME/.config/git/config"
+    if [[ ! -f "$git_config" ]] ; then
+        echo "$git_config not found" >&2
+        return 1
+    fi
     if [[ -z $PROJECTS_DIR ]] ; then
         echo "PROJECTS_DIR not set" >&2
+        return 1
     fi
     if [[ $# -ne 1 ]] ; then
         echo "usage: gitclone gitssh-endpoint" >&2
         return 1
     fi
+    # parse the endpoint argument
     local regex='git@([^:]*):([^/]*)/(.*?)\.git'
     if [[ ! $1 =~ $regex ]]; then
         echo "unrecognized gitssh-endpoint format" >&2
-        return 1
-    fi
-    local local_gituser
-    read -p "Local git user: " local_gituser
-    if [[ -z $local_gituser ]] ; then
-        echo "invalid username" >&2
         return 1
     fi
     local hostname="${BASH_REMATCH[1]}"
@@ -147,12 +148,38 @@ gitssh-clone() {
     local fields
     IFS='.' read -a fields <<< "$hostname"
     local site="${fields[-2]}"
+    # find all user profiles referenced in global git config
+    # create associative array, where all_users[site]="user0 user1..."
+    local -A all_users
+    while read -r _site _user; do
+        if [[ ! -v all_users["$_site"] ]] ; then
+            all_users["$_site"]="$_user"
+        else
+            all_users["$_site"]="${all_users["$_site"]} $_user"
+        fi
+    done < <(sed -n -r 's|\s*path\s*=.*\.config/git/config\.(.*)\.(.*)|\1 \2|g p' $git_config)
+    # prompt for user selection, limited to those having a site profile
+    if [[ ! -v all_users["$site"] ]] ; then
+        echo "no $site users found in $git_config" >&2
+        return 1
+    fi
+    local -a site_users
+    readarray -t -d ' ' site_users < <(printf '%s' "${all_users["$site"]}")
+    local local_gituser
+    choose_from_menu "Local git user:" local_gituser "${site_users[@]}" \
+        || return
+    if [[ -z $local_gituser ]] ; then
+        echo "invalid username" >&2
+        return 1
+    fi
+    # clone into the mapped directory using the rewritten endpoint
     echo -e "Site: $site\nProject: $remote_gituser/$project"
     dest_dir="$PROJECTS_DIR/$site/$local_gituser/$project"
-    read -p "Clone into $dest_dir? (y/N): " confirm && \
-        [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || return 1
-    git clone "${site}_$local_gituser:$remote_gituser/$project.git" "$dest_dir"
-    echo "pushd $dest_dir..."
+    read -p "Clone into $dest_dir? (y/N): " confirm \
+        && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || return 1
+    git clone "${site}_$local_gituser:$remote_gituser/$project.git" "$dest_dir" \
+        || return
+    echo "pushd..."
     pushd "$dest_dir" > /dev/null
 }
 
