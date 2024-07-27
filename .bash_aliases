@@ -158,17 +158,17 @@ gitssh-clone() {
 
 # terminal-only, url-aware alternative to `pygmentize` with enhanced lexer guessing
 pygterminize() {
-    local PYGMENTS_PYTHON="$HOME/.local/pipx/venvs/pygments/bin/python"
-    local PYGTERMINIZE="$HOME/scripts/pygterminize.py"
-    if [[ ! -f $PYGMENTS_PYTHON ]] ; then
-        echo "not found: $PYGMENTS_PYTHON" >&2
+    local pygments_python="$HOME/.local/pipx/venvs/pygments/bin/python"
+    local pygterminize="$HOME/scripts/pygterminize.py"
+    if [[ ! -f $pygments_python ]] ; then
+        echo "not found: $pygments_python" >&2
         return 1
     fi
-    if [[ ! -f $PYGTERMINIZE ]] ; then
-        echo "not found: $PYGTERMINIZE" >&2
+    if [[ ! -f $pygterminize ]] ; then
+        echo "not found: $pygterminize" >&2
         return 1
     fi
-    "$PYGMENTS_PYTHON" "$PYGTERMINIZE" $@
+    "$pygments_python" "$pygterminize" $@
 }
 
 # fetch and pygmentize a URL document to stdout
@@ -181,30 +181,30 @@ pyget() {
         echo "usage: pyget url" >&2
         return 1
     fi
-    local URL="$1"
+    local url="$1"
     (
         set -euo pipefail
-        wget -q --show-progress -O - "$URL" | pygterminize -u "$URL"
+        wget -q --show-progress -O - "$url" | pygterminize -u "$url"
     )
 }
 
 # fetch and pygmentize a URL document to less
 lessget() {
     if [[ $# -lt 1 ]] ; then
-        echo "usage: lessget [LESS_OPTIONS] url" >&2
+        echo "usage: lessget [less_options] url" >&2
         return 1
     fi
     if [[ $# -gt 1 ]] ; then
-        local LESS_OPTIONS="${@: 1:$#-1}"
+        local less_options="${@: 1:$#-1}"
     fi
-    local URL="${@: -1}"
+    local url="${@: -1}"
     # use a temp file to handle large docs
     (
         set -eo pipefail
-        TEMPFILE=$(mktemp)
-        trap "rm -f ${TEMPFILE@Q}" EXIT
-        pyget "$URL" > "$TEMPFILE"
-        less $LESS_OPTIONS "$TEMPFILE"
+        tempfile=$(mktemp)
+        trap "rm -f ${tempfile@Q}" EXIT
+        pyget "$url" > "$tempfile"
+        less $less_options "$tempfile"
     )
 }
 
