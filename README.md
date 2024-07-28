@@ -121,6 +121,9 @@ git submodule update --init --recursive
 #       `git clone git@github.com:torvalds/linux.git`
 #       becomes:
 #       `git clone github_CoeJoder:torvalds/linux.git ~/projects/github/CoeJoder/linux`
+#       
+# This can be automated with the utility function `gitssh-clone()`:
+#   `gitssh-clone git@github.com:torvalds/linux.git`
 
 # deploy dotfiles & substitute private configs
 # IMPORTANT: This WILL overwrite existing files; backup recommended.
