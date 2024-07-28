@@ -148,23 +148,18 @@ gitssh-clone() {
     local fields
     IFS='.' read -a fields <<< "$hostname"
     local site="${fields[-2]}"
-    # find all user profiles referenced in global git config
-    # create associative array, where all_users[site]="user0 user1..."
-    local -A all_users
-    while read -r _site _user; do
-        if [[ ! -v all_users["$_site"] ]] ; then
-            all_users["$_site"]="$_user"
-        else
-            all_users["$_site"]="${all_users["$_site"]} $_user"
-        fi
-    done < <(sed -n -r 's|\s*path\s*=.*\.config/git/config\.(.*)\.(.*)|\1 \2|g p' $git_config)
-    # prompt for user selection, limited to those having a site profile
-    if [[ ! -v all_users["$site"] ]] ; then
+    # find all user profiles for site in global git config
+    local -a site_users
+    readarray -t site_users < <(
+        while read -r _site _user; do
+            if [[ "$_site" = "$site" ]] ; then
+                printf "%s\n" "$_user"
+            fi
+        done < <(sed -n -r 's|\s*path\s*=.*\.config/git/config\.(.*)\.(.*)|\1 \2|g p' $git_config))
+    if (( ${#site_users[@]} == 0 )) ; then
         echo "no $site users found in $git_config" >&2
         return 1
     fi
-    local -a site_users
-    readarray -t -d ' ' site_users < <(printf '%s' "${all_users["$site"]}")
     local local_gituser
     choose_from_menu "Local git user:" local_gituser "${site_users[@]}" \
         || return
