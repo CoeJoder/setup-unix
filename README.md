@@ -111,6 +111,9 @@ git submodule update --init --recursive
 
 # NOTE: when cloning projects, the SSH user creds will be chosen based on gitdir,
 # but this also requires local address-rewriting.  To make this work, follow these guidelines:
+#       
+#   NOTE: The below can be automated by using `gitssh-clone()`:
+#     `gitssh-clone git@github.com:torvalds/linux.git`
 #
 #   - Clone projects into `~/projects/[site]/[user]/[project]`
 #   - When cloning, instead of:
@@ -121,9 +124,6 @@ git submodule update --init --recursive
 #       `git clone git@github.com:torvalds/linux.git`
 #       becomes:
 #       `git clone github_CoeJoder:torvalds/linux.git ~/projects/github/CoeJoder/linux`
-#       
-# This can be automated with the utility function `gitssh-clone()`:
-#   `gitssh-clone git@github.com:torvalds/linux.git`
 
 # deploy dotfiles & substitute private configs
 # IMPORTANT: This WILL overwrite existing files; backup recommended.
@@ -142,12 +142,9 @@ nvim
 # restart neovim to see if transparency is working
 
 # setup joplin sandboxing
-# IMPORTANT set JOPLIN_BACKUP_DIR to a subdir of /media
-JOPLIN_BACKUP_DIR='/media/.../joplin'
-sed -i "s|\${JOPLIN_BACKUP_DIR}|$JOPLIN_BACKUP_DIR|g" ~/.config/firejail/joplin.local
 sed -i 's|Exec=.*|Exec=/bin/bash -c "firejail --appimage --profile=joplin --nosound "$HOME/.joplin/Joplin.AppImage""|g' ~/.local/share/applications/appimagekit-joplin.desktop
 update-desktop-database
-# start Joplin and set the backup directory to JOPLIN_BACKUP_DIR
+# start Joplin and set the backup directory to ~/.config/joplin-desktop/JoplinBackup
 # before quitting Joplin, verify that it is listed here:
 # firejail --list
 
