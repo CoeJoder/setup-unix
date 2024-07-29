@@ -6,7 +6,7 @@ if [[ ~ -ef $PROJ_DIR ]]; then
     printf "This script is intended to be run from the cloned dir, not the deployment destination.\nExiting...\n"
 else
     echo "Deploying the dotfiles..."
-    if [[ $1 == '--update' ]]; then
+    if [[ $1 != '--all' ]]; then
         RSYNC_OPTS='--update'
     fi
     rsync -avh $RSYNC_OPTS --exclude-from="$SCRIPT_DIR/excludes.txt" $PROJ_DIR/ ~
