@@ -136,6 +136,7 @@ gitssh-clone() {
     fi
     if [[ $# -lt 1 ]] ; then
         echo "usage: gitssh-clone [git-clone_options] gitssh-endpoint" >&2
+        echo "       gitssh-clone --dry-run gitssh-endpoint" >&2
         return 1
     fi
     if [[ $# -gt 1 ]] ; then
@@ -178,15 +179,20 @@ gitssh-clone() {
         echo "invalid username" >&2
         return 1
     fi
-    # clone into the mapped directory using the rewritten endpoint
-    echo -e "Site: $site\nProject: $remote_gituser/$project"
+    new_endpoint="${site}_$local_gituser:$remote_gituser/$project.git"
     dest_dir="${users_to_dirs[$local_gituser]}/$project"
-    read -p "Clone into $dest_dir? (y/N): " confirm \
-        && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || return 1
-    git clone $git_options "${site}_$local_gituser:$remote_gituser/$project.git" "$dest_dir" \
-        || return
-    echo "pushd..."
-    pushd "$dest_dir" > /dev/null
+    if [[ $git_options == '--dry-run' ]] ; then
+        printf "%s\n%s\n" "Repository: $new_endpoint" "Directory: $dest_dir"
+    else
+        # clone into the mapped directory using the rewritten endpoint
+        echo -e "Site: $site\nProject: $remote_gituser/$project"
+        read -p "Clone into $dest_dir? (y/N): " confirm \
+            && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || return 1
+        git clone $git_options "$new_endpoint" "$dest_dir" \
+            || return
+        echo "pushd..."
+        pushd "$dest_dir" > /dev/null
+    fi
 }
 
 # terminal-only, url-aware alternative to `pygmentize` with enhanced lexer guessing
