@@ -6,6 +6,7 @@
 /.setup-unix.png
 /scripts/deploy_setup_unix.sh
 /scripts/excludes.txt
+.vscode
 
 # git files
 .gitconfig

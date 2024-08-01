@@ -87,47 +87,21 @@ sudo apt update -y && sudo apt install -y ~/Downloads/bcompare-4.4.7.28397_amd64
 sudo gpasswd -a $USER lp
 sudo gpasswd -a $USER lpadmin
 
-# setup git site-user project dir structure
+# setup dotfiles
 # IMPORTANT: set GITHUB_USER to your main GitHub username
 GITHUB_USER=CoeJoder
-GITHUB_PROJ_DIR="~/projects/github/$GITHUB_USER"
-mkdir -p $GITHUB_PROJ_DIR
-
-# setup dotfiles
-git clone --recurse-submodules git@github.com:CoeJoder/setup-unix.git $GITHUB_PROJ_DIR/setup-unix
-pushd $GITHUB_PROJ_DIR/setup-unix
-# list branches, switch to Mint21_3 branch, init submodules
+SETUP_UNIX_DIR="$HOME/projects/github/$GITHUB_USER/setup-unix"
+mkdir -p $SETUP_UNIX_DIR
+git clone https://github.com/CoeJoder/setup-unix.git $SETUP_UNIX_DIR
+pushd $SETUP_UNIX_DIR
 git branch -a
 git checkout Mint21_3
+
+# deploy git configs, switch to git+ssh, deploy the rest
+./scripts/deploy_setup_unix.sh --bootstrap
+git remote set-url origin "github.com_$GITHUB_USER:CoeJoder/setup-unix.git"
 git submodule update --init --recursive
-
-# IMPORTANT: edit/rename `.config/git/CoeJoder-github.com.config` to `.config/git/[your-main-github-user]-github.com.config`
-# Optional: add any additional `.config/git/[user]-[site].config`
-
-# IMPORTANT: edit `.config/git/config` and change paths as needed
-# Optional: add any additional entries such as:
-#   [includeIf "gitdir:~/projects/[site-dir]/[user]/**"]
-#     path = ~/.config/git/[user]-[site].config
-
-# NOTE: when cloning projects, the SSH user creds will be chosen based on gitdir,
-# but this also requires local address-rewriting.  To make this work, follow these guidelines:
-#       
-#   NOTE: The below can be automated by using `gitssh-clone()`:
-#     `gitssh-clone git@github.com:torvalds/linux.git`
-#
-#   - Clone projects into `~/projects/[site-dir]/[user]/[project]`
-#   - When cloning, instead of:
-#       `git clone [gitssh-endpoint]:[remote-user]/[project].git`
-#     Do:
-#       `git clone [site]_[user]:[remote-user]/[project].git ~/projects/[site-dir]/[user]/[project]`
-#   - Example:
-#       `git clone git@github.com:torvalds/linux.git`
-#       becomes:
-#       `git clone github.com_CoeJoder:torvalds/linux.git ~/projects/github/CoeJoder/linux`
-
-# deploy dotfiles & substitute private configs
-# IMPORTANT: This WILL overwrite existing files; backup recommended.
-./scripts/deploy_setup_unix.sh
+./scripts/deploy_setup_unix.sh --all
 popd
 
 # setup NodeJS
@@ -171,3 +145,13 @@ sudo reboot
 - schedule periodic Foxclone full-disk backups
 - test restoration of Timeshift/BackInTime snapshots in a Mint VM
 - test restoration of Foxclone backup via file-to-drive clone in a VM
+
+## Using git+ssh
+- to work as multiple users per host across projects, git is configured to multiplex host/user credential requests to SSH based on the project directory.  See:
+  - ~/.ssh/config
+  - ~/.config/git/config
+- projects should be cloned using `gitssh-clone()`, e.g:
+    - `gitssh-clone git@github.com:torvalds/linux.git`
+
+### IMPORTANT
+Ensure git and ssh configs are correct at this point.
