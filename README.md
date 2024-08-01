@@ -101,13 +101,13 @@ git branch -a
 git checkout Mint21_3
 git submodule update --init --recursive
 
-# IMPORTANT: edit/rename `.config/git/config.github.CoeJoder` to `.config/git/config.github.[your-main-github-user]`
-# Optional: add any additional `.config/git/config.[site].[user]`
+# IMPORTANT: edit/rename `.config/git/CoeJoder-github.com.config` to `.config/git/[your-main-github-user]-github.com.config`
+# Optional: add any additional `.config/git/[user]-[site].config`
 
 # IMPORTANT: edit `.config/git/config` and change paths as needed
 # Optional: add any additional entries such as:
-#   [includeIf "gitdir:~/projects/[site]/[user]/**"]
-#     path = ~/.config/git/config.[site].[user]
+#   [includeIf "gitdir:~/projects/[site-dir]/[user]/**"]
+#     path = ~/.config/git/[user]-[site].config
 
 # NOTE: when cloning projects, the SSH user creds will be chosen based on gitdir,
 # but this also requires local address-rewriting.  To make this work, follow these guidelines:
@@ -115,15 +115,15 @@ git submodule update --init --recursive
 #   NOTE: The below can be automated by using `gitssh-clone()`:
 #     `gitssh-clone git@github.com:torvalds/linux.git`
 #
-#   - Clone projects into `~/projects/[site]/[user]/[project]`
+#   - Clone projects into `~/projects/[site-dir]/[user]/[project]`
 #   - When cloning, instead of:
 #       `git clone [gitssh-endpoint]:[remote-user]/[project].git`
 #     Do:
-#       `git clone [site]_[user]:[remote-user]/[project].git ~/projects/[site]/[user]/[project]`
+#       `git clone [site]_[user]:[remote-user]/[project].git ~/projects/[site-dir]/[user]/[project]`
 #   - Example:
 #       `git clone git@github.com:torvalds/linux.git`
 #       becomes:
-#       `git clone github_CoeJoder:torvalds/linux.git ~/projects/github/CoeJoder/linux`
+#       `git clone github.com_CoeJoder:torvalds/linux.git ~/projects/github/CoeJoder/linux`
 
 # deploy dotfiles & substitute private configs
 # IMPORTANT: This WILL overwrite existing files; backup recommended.

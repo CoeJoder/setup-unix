@@ -121,47 +121,58 @@ function choose_from_menu() {
     printf -v $outvar "${options[$cur]}"
 }
 
+# escapes arbitrary strings for use in sed regex
+# source: https://stackoverflow.com/a/29613573/159570
+escape_sed_regex() { sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' <<<"$1" | tr -d '\n'; }
+
 # given a gitssh endpoint, clones the repo according to gitdir/ssh-user mappings
 gitssh-clone() {
+    # NOTE current impl assumes particular structure of config file;
+    # could move to python and parse with GitPython or ConfigParser
     local git_config="$HOME/.config/git/config"
-    if [[ ! -f "$git_config" ]] ; then
+    if [[ ! -f $git_config ]] ; then
         echo "$git_config not found" >&2
         return 1
     fi
-    if [[ -z $PROJECTS_DIR ]] ; then
-        echo "PROJECTS_DIR not set" >&2
+    if [[ $# -lt 1 ]] ; then
+        echo "usage: gitssh-clone [git-clone_options] gitssh-endpoint" >&2
         return 1
     fi
-    if [[ $# -ne 1 ]] ; then
-        echo "usage: gitclone gitssh-endpoint" >&2
-        return 1
+    if [[ $# -gt 1 ]] ; then
+        local git_options="${@: 1:$#-1}"
     fi
+    local endpoint="${@: -1}"
     # parse the endpoint argument
     local regex='git@([^:]*):([^/]*)/(.*?)\.git'
-    if [[ ! $1 =~ $regex ]]; then
+    if [[ ! $endpoint =~ $regex ]]; then
         echo "unrecognized gitssh-endpoint format" >&2
         return 1
     fi
-    local hostname="${BASH_REMATCH[1]}"
-    local remote_gituser="${BASH_REMATCH[2]}"
-    local project="${BASH_REMATCH[3]}"
-    local fields
-    IFS='.' read -a fields <<< "$hostname"
-    local site="${fields[-2]}"
-    # find all user profiles for site in global git config
-    local -a site_users
-    readarray -t site_users < <(
-        while read -r _site _user; do
-            if [[ "$_site" = "$site" ]] ; then
-                printf "%s\n" "$_user"
-            fi
-        done < <(sed -n -r 's|\s*path\s*=.*\.config/git/config\.(.*)\.(.*)|\1 \2|g p' $git_config))
-    if (( ${#site_users[@]} == 0 )) ; then
+    local site=${BASH_REMATCH[1]}
+    local remote_gituser=${BASH_REMATCH[2]}
+    local project=${BASH_REMATCH[3]}
+    local escaped_site=$(escape_sed_regex "$site");
+    local -A users_to_dirs
+    local _cur_user
+    local _i=0
+    while read -r _line; do
+        if [[ $((_i % 2)) -eq 0 ]] ; then
+            _cur_user=$_line
+        else
+            users_to_dirs[$_cur_user]=$_line
+        fi
+        ((_i++))
+    done < <(sed -n \
+        -re "s|~|$HOME|" \
+        -re '/\[includeIf "gitdir:/{s|\[.*:(.*)/\**".*|\1|;h;d;n}' \
+        -re "\|path\s*=.*/\.config/git/.*-$escaped_site\.config|{s|.*/(.*)-$escaped_site\.config|\1|p;x;p}" \
+        "$git_config")
+    if (( ${#users_to_dirs[@]} == 0 )) ; then
         echo "no $site users found in $git_config" >&2
         return 1
     fi
     local local_gituser
-    choose_from_menu "Local git user:" local_gituser "${site_users[@]}" \
+    choose_from_menu "Local git user:" local_gituser "${!users_to_dirs[@]}" \
         || return
     if [[ -z $local_gituser ]] ; then
         echo "invalid username" >&2
@@ -169,10 +180,10 @@ gitssh-clone() {
     fi
     # clone into the mapped directory using the rewritten endpoint
     echo -e "Site: $site\nProject: $remote_gituser/$project"
-    dest_dir="$PROJECTS_DIR/$site/$local_gituser/$project"
+    dest_dir="${users_to_dirs[$local_gituser]}/$project"
     read -p "Clone into $dest_dir? (y/N): " confirm \
         && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || return 1
-    git clone "${site}_$local_gituser:$remote_gituser/$project.git" "$dest_dir" \
+    git clone $git_options "${site}_$local_gituser:$remote_gituser/$project.git" "$dest_dir" \
         || return
     echo "pushd..."
     pushd "$dest_dir" > /dev/null

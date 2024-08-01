@@ -36,7 +36,7 @@
 !.config/firejail/joplin.local
 !.config/git/
 !.config/git/config
-!.config/git/config.github.CoeJoder
+!.config/git/CoeJoder-github.com.config
 !.config/nvim/
 
 !.local/

@@ -1,2 +1,2 @@
 [includeIf "gitdir:~/projects/github/CoeJoder/**"]
-    path = ~/.config/git/config.github.CoeJoder
+    path = ~/.config/git/CoeJoder-github.com.config
