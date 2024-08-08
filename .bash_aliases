@@ -247,6 +247,31 @@ lessget() {
     )
 }
 
+# get the most recent file in the tree
+get_latest_file() (
+    _helper() {
+        local file=$(ls -Art1 --color=never "$1" | tail -n 1)
+        if [[ ! -f ${file} ]]; then
+            _helper "$1/${file}"
+        else
+            echo $file
+            exit
+        fi
+    }
+    _helper "${1:-.}"
+)
+
+# copy to clipboard the most recent receipt path as a spreadsheet hyperlink
+get_receipt() {
+    local receipts_dir="$HOME/Documents/Receipts"
+    local latest_file=$(get_latest_file "$receipts_dir")
+    local full_path=$(realpath "$latest_file")
+    local base_name=$(basename "$latest_file")
+    local output="=HYPERLINK(\"${full_path}\", \"${base_name}\")"
+    printf "%s" "$output" | xclip -selection clipboard
+    echo "Copied to clipboard: $output"
+}
+
 # start tmux with the current environment
 if [ "$TMUX" = "" ] && [ "$SKIP_TMUX" != 0 ]; then tmux -L default; fi
 
