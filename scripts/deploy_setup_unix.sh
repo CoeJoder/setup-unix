@@ -6,13 +6,13 @@ if [[ ~ -ef $PROJ_DIR ]]; then
     echo "must run from cloned dir, not deployment destination" >&2
     exit 1
 fi
-if [[ $1 == '-h']] ; then
+if [[ $1 == '-h' ]] ; then
     echo "usage: deploy_setup_unix --bootstrap" >&2
     echo "       deploy_setup_unix [--all]" >&2
     exit 0
 fi
 
-if [[ $1 == '--bootstrap']] ; then
+if [[ $1 == '--bootstrap' ]] ; then
     echo "Bootstrapping git config..."
     rsync -avh ./.config/git/ ~/.config/git
 else
