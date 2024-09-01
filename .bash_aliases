@@ -248,18 +248,13 @@ lessget() {
 }
 
 # get the most recent file in the tree
-get_latest_file() (
-    _helper() {
-        local file=$(ls -Art1 --color=never "$1" | tail -n 1)
-        if [[ ! -f ${file} ]]; then
-            _helper "$1/${file}"
-        else
-            echo $file
-            exit
-        fi
-    }
-    _helper "${1:-.}"
-)
+# source: https://stackoverflow.com/a/38996701/159570
+get_latest_file() {
+    local dir=${1:-.}
+    readarray -t -d '' files < <(LC_ALL=C find "$dir" -name . -o -name '.*' \
+        -prune -o -type f -printf '%T@/%p\0' | sort -rzn | cut -zd/ -f2-)
+    ((${#files[@]} > 0)) && printf '%s\n' "${files[0]}"
+}
 
 # copy to clipboard the most recent receipt path as a spreadsheet hyperlink
 get_receipt() {
