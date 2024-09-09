@@ -21,4 +21,4 @@ echo "Block size of $DISK detected as $BLOCKSIZE B"
 echo "Number of sectors on $DISK detected as $NUMSECTORS"
 read -p "Continue with secure wipe? (y/N): " confirm && \
     [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
-dd if=/dev/urandom of=$DISK bs=$BLOCKSIZE count=$NUMSECTORS seek=0 status=progress
+sudo dd if=/dev/urandom iflag=fullblock of=$DISK bs=$BLOCKSIZE count=$NUMSECTORS seek=0 status=progress
