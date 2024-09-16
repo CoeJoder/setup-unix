@@ -84,6 +84,25 @@ whatismyip() {
     echo "$(curl -kLs https://ipinfo.io/ip)"
 }
 
+# `read` but allows a default value
+function read_with_default() {
+    if [[ $# -lt 3 ]] ; then
+        echo "usage: read_with_default prompt default_val outvar" >&2
+        return 1
+    fi
+    local prompt="$1" default_val="$2" outvar="$3"
+    local _val
+    # cursor: save
+    echo -en "${prompt}\e[s"
+    read _val
+    if [[ -z $_val ]]; then
+        _val="$default_val"
+        # cursor: 1-up, load
+        echo -e "\e[1A\e[u${_val}"
+    fi
+    printf -v $outvar "$_val"
+}
+
 # in-place shell selection list
 # source: https://askubuntu.com/a/1386907
 function choose_from_menu() {
