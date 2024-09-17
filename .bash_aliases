@@ -103,6 +103,72 @@ function read_with_default() {
     printf -v $outvar "$_val"
 }
 
+# activate & mount a LUKS container
+function luks_open() (  # subshell function
+	set -Eeuo pipefail	# bash strict-mode
+
+    blkid_output=$(blkid -t TYPE=crypto_LUKS -lo export)
+    if [[ -z $blkid_output ]]; then
+        echo "no LUKS container found" >&2
+        exit 1
+    fi
+    source <(echo "$blkid_output")
+    if [[ -z $DEVNAME ]]; then
+        echo "expected DEVNAME to be non-empty" >&2
+        exit 1
+    fi
+    read_with_default "LUKS container ($DEVNAME): " "$DEVNAME" src_container
+	if [[ -z $src_container ]]; then
+		echo "no container specified" >&2
+		exit 1
+	fi
+
+	default_val="skyhawk"
+	read_with_default "Name ($default_val): " "$default_val" name
+
+	default_val="/mnt/$name"
+	read_with_default "Mount point ($default_val): " "$default_val" mount_point
+
+	default_val="/dev/mapper/$name"
+	read_with_default "Mapped device ($default_val): " "$default_val" mapped_device
+
+	# activate container and mount it
+	sudo cryptsetup open "$src_container" "$name"
+	sudo mount "$mapped_device" "$mount_point"
+)
+
+# deactivate & unmount a LUKS container
+function luks_close() ( # subshell function
+	set -Eeuo pipefail	# bash strict-mode
+
+    blkid_output=$(blkid -t TYPE=crypto_LUKS -lo export)
+    if [[ -z $blkid_output ]]; then
+        echo "no LUKS container found" >&2
+        exit 1
+    fi
+    source <(echo "$blkid_output")
+    if [[ -z $DEVNAME ]]; then
+        echo "expected DEVNAME to be non-empty" >&2
+        exit 1
+    fi
+    read_with_default "LUKS container ($DEVNAME): " "$DEVNAME" src_container
+	if [[ -z $src_container ]]; then
+		echo "no container specified" >&2
+		exit 1
+	fi
+
+	default_val="skyhawk"
+	read_with_default "Name ($default_val): " "$default_val" name
+
+	default_val="/mnt/$name"
+	read_with_default "Mount point ($default_val): " "$default_val" mount_point
+
+	# unmount container and deactivate it
+	sudo umount "$mount_point"
+	sudo cryptsetup close "$name"
+    sudo eject "$src_container"
+)
+
 # in-place shell selection list
 # source: https://askubuntu.com/a/1386907
 function choose_from_menu() {
