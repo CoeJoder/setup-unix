@@ -259,8 +259,7 @@ function gitssh_clone() {
         return 1
     fi
     local local_gituser
-    choose_from_menu "Local git user:" local_gituser "${!users_to_dirs[@]}" \
-        || return
+    choose_from_menu "Local git user:" local_gituser "${!users_to_dirs[@]}"
     if [[ -z $local_gituser ]] ; then
         echo "invalid username" >&2
         return 1
@@ -353,6 +352,24 @@ function get_receipt() {
     echo "Copied to clipboard: $output"
 }
 
+function play_music_shuffled() {
+    local music_dirs chosen_dir
+    local root_dir="$HOME/Music"
+    if [[ $# -gt 0 ]]; then
+        root_dir="$1"
+        if [[ ! -d $root_dir ]]; then
+            echo "Directory not found: $root_dir" >&2
+            return 1
+        fi
+    fi
+    readarray -t music_dirs < <(find "$root_dir" -maxdepth 1 -type d -printf '%p\n')
+    choose_from_menu "Make your selection:" chosen_dir "${music_dirs[@]}"
+    (celluloid --mpv-shuffle --mpv-fullscreen "$chosen_dir" & >/dev/null)
+}
+
+function robot_ears() {
+    play_music_shuffled "$HOME/Music/Programming Music"
+}
+
 # start tmux with the current environment
 if [ "$TMUX" = "" ] && [ "$SKIP_TMUX" != 0 ]; then tmux -L default; fi
-
