@@ -171,6 +171,7 @@ function luks_close() ( # subshell function
 
 # in-place shell selection list
 # source: https://askubuntu.com/a/1386907
+# (with minor syntax changes to fix vscode syntax highlighting)
 function choose_from_menu() {
     local prompt="$1" outvar="$2"
     shift
@@ -191,10 +192,10 @@ function choose_from_menu() {
             index=$(( $index + 1 ))
         done
         read -s -n3 key # wait for user to key in arrows or ENTER
-        if [[ $key == $esc[A ]] # up arrow
+        if [[ $key == "$esc[A" ]] # up arrow
         then cur=$(( $cur - 1 ))
             [ "$cur" -lt 0 ] && cur=0
-        elif [[ $key == $esc[B ]] # down arrow
+        elif [[ $key == "$esc[B" ]] # down arrow
         then cur=$(( $cur + 1 ))
             [ "$cur" -ge $count ] && cur=$(( $count - 1 ))
         elif [[ $key == "" ]] # nothing, i.e the read delimiter - ENTER
@@ -208,10 +209,10 @@ function choose_from_menu() {
 
 # escapes arbitrary strings for use in sed regex
 # source: https://stackoverflow.com/a/29613573/159570
-escape_sed_regex() { sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' <<<"$1" | tr -d '\n'; }
+function escape_sed_regex() { sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' <<<"$1" | tr -d '\n'; }
 
 # given a gitssh endpoint, clones the repo according to gitdir/ssh-user mappings
-gitssh-clone() {
+function gitssh_clone() {
     # NOTE current impl assumes particular structure of config file;
     # could move to python and parse with GitPython or ConfigParser
     local git_config="$HOME/.config/git/config"
@@ -281,7 +282,7 @@ gitssh-clone() {
 }
 
 # terminal-only, url-aware alternative to `pygmentize` with enhanced lexer guessing
-pygterminize() {
+function pygterminize() {
     local pygments_python="$HOME/.local/pipx/venvs/pygments/bin/python"
     local pygterminize="$HOME/scripts/pygterminize.py"
     if [[ ! -f $pygments_python ]] ; then
@@ -296,7 +297,7 @@ pygterminize() {
 }
 
 # fetch and pygmentize a URL document to stdout
-pyget() {
+function pyget() {
     if ! type -P wget >/dev/null 2>&1; then
         echo "command 'wget' not found" >&2
         return 1
@@ -313,7 +314,7 @@ pyget() {
 }
 
 # fetch and pygmentize a URL document to less
-lessget() {
+function lessget() {
     if [[ $# -lt 1 ]] ; then
         echo "usage: lessget [less_options] url" >&2
         return 1
@@ -334,7 +335,7 @@ lessget() {
 
 # get the most recent file in the tree
 # source: https://stackoverflow.com/a/38996701/159570
-get_latest_file() {
+function get_latest_file() {
     local dir=${1:-.}
     readarray -t -d '' files < <(LC_ALL=C find "$dir" -name . -o -name '.*' \
         -prune -o -type f -printf '%T@/%p\0' | sort -rzn | cut -zd/ -f2-)
@@ -342,7 +343,7 @@ get_latest_file() {
 }
 
 # copy to clipboard the most recent receipt path as a spreadsheet hyperlink
-get_receipt() {
+function get_receipt() {
     local receipts_dir="$HOME/Documents/Receipts"
     local latest_file=$(get_latest_file "$receipts_dir")
     local full_path=$(realpath "$latest_file")
