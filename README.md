@@ -41,8 +41,8 @@ sudo update-alternatives --install /usr/bin/vi vi /usr/bin/nvim 60
 sudo update-alternatives --install /usr/bin/vim vim /usr/bin/nvim 60
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
 
-# install tmux, pipx, pynvim, gawk, git, firetools
-sudo apt install -y tmux pipx python3-pynvim gawk git firetools
+# install APT packages
+sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt
 # (no need to run `pipx ensurepath`, it's already set in ~/.profile)
 
 # install ytp-dlp, Pygments
