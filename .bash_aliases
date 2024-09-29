@@ -352,6 +352,19 @@ function get_receipt() {
     echo "Copied to clipboard: $output"
 }
 
+# copy to clipboard a spreadsheet hyperlink constructed in the shell
+function to_hyperlink() {
+    if [[ $# -ne 2 ]]; then
+        echo "usage: to_hyperlink path name"
+        return 1
+    fi
+    local path="$1" name="$2"
+    local output="=HYPERLINK(\"${path}\", \"${name}\")"
+    printf "%s" "$output" | xclip -selection clipboard
+    echo "Copied to clipboard: $output"
+}
+
+# launch media player from shell-based folder selector
 function play_music_shuffled() {
     local music_dirs chosen_dir
     local root_dir="$HOME/Music"
@@ -367,6 +380,7 @@ function play_music_shuffled() {
     (celluloid --mpv-shuffle --mpv-fullscreen "$chosen_dir" & >/dev/null)
 }
 
+# launch media player for 1337 h4cker jamz
 function robot_ears() {
     play_music_shuffled "$HOME/Music/Programming Music"
 }
