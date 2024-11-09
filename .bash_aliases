@@ -385,5 +385,21 @@ function robot_ears() {
     play_music_shuffled "$HOME/Music/Programming Music"
 }
 
+# simple codium launcher which caches path argument
+function code() {
+    local last_proj_file="$HOME/.last_codium_project"
+    local codium_arg=''
+    if [[ $# -eq 0 ]]; then
+        if [[ -f $last_proj_file ]]; then
+            codium_arg="$(<"$last_proj_file")"
+        fi
+    else
+        codium_arg="$(realpath "$1")"
+        printf '%s' "$codium_arg" > "$last_proj_file"
+    fi
+    [[ -n $codium_arg ]] && pushd "$codium_arg" &>/dev/null
+    codium "$codium_arg"
+}
+
 # start tmux with the current environment
 if [ "$TMUX" = "" ] && [ "$SKIP_TMUX" != 0 ]; then tmux -L default; fi
