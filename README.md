@@ -45,9 +45,17 @@ sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
 sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt
 # (no need to run `pipx ensurepath`, it's already set in ~/.profile)
 
+# install more APT packages (required by pyenv)
+sudo apt install -y build-essential libssl-dev zlib1g-dev \
+libbz2-dev libreadline-dev libsqlite3-dev curl git \
+libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+
 # install ytp-dlp, Pygments
 pipx install yt-dlp[default]
 pipx install Pygments
+
+# install pyenv
+curl -fsSL https://pyenv.run | bash
 
 # install pipenv
 pip install pipenv --user
@@ -147,11 +155,11 @@ sudo reboot
 - test restoration of Foxclone backup via file-to-drive clone in a VM
 
 ## Using git+ssh
-- to work as multiple users per host across projects, git is configured to multiplex host/user credential requests to SSH based on the project directory.  See:
+- to work as multiple users per host across projects, git-ssh is configured based on the project directory.  See:
   - ~/.ssh/config
   - ~/.config/git/config
-- projects should be cloned using `gitssh-clone()`, e.g:
-    - `gitssh-clone git@github.com:torvalds/linux.git`
+- projects should be cloned using `gitssh_clone()`, e.g:
+    - `gitssh_clone git@github.com:torvalds/linux.git`
 
 ### IMPORTANT
 Ensure git and ssh configs are correct at this point.
