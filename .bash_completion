@@ -5,7 +5,7 @@
 
 # pipx
 have pipx &&
-    eval "$(register-python-argcomplete3 pipx)"
+    eval "$(register-python-argcomplete pipx)"
 
 # VM hypervisor client
 vm() {
