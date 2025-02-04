@@ -1,5 +1,5 @@
-# setup-unix: Linux Mint 21.3
-My setup on Linux Mint 21.3
+# setup-unix: Linux Mint 22.1
+My setup on Linux Mint 22.1
 
 ## Preview
 
@@ -13,14 +13,57 @@ The programs being run are [tmux](https://github.com/tmux/tmux) for multiplexing
 the various shells, [neovim](https://github.com/neovim/neovim) for editing, and
 bash for the shell, all set up using the configurations in this repo.
 
+## Pre-setup
+
+If moving from a previous O/S instance:
+- ensure that a BackInTime `/home` snapshot is available
+- export Firefox bookmarks for each profile
+
 ## Setup
 
 ```bash
 # update/upgrade
 sudo apt update -y && sudo apt upgrade -y
 
-# copy Firefox profiles over
-# see: https://support.mozilla.org/en-US/kb/recovering-important-data-from-an-old-profile#w_bookmarks-downloads-and-browsing-history
+# install APT packages
+sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt backintime-qt
+# (no need to run `pipx ensurepath`, it's already set in ~/.profile)
+
+# set Calender custom format
+# - Date format: %A, %b %-d, %-I:%M %p
+# - Date format for tooltip: %A, %b %-d, %-I:%M %p
+
+# set Screensaver custom format
+# - Time Format: %-I:%M %p
+# - Date Format: %A, %b %-d
+
+# add Clock desklet and set custom format
+# - Date format: %A, %b %-d, %-I:%M %p
+
+# set "List View" as default in Nemo (file manager)
+# - Edit > Preferences > Views
+
+# launch Firefox Profile Manager
+firefox -P
+# for each profile to restore:
+# - create a new profile
+# - restore profile data from backup: https://support.mozilla.org/en-US/kb/recovering-important-data-from-an-old-profile#w_bookmarks-downloads-and-browsing-history
+# - import bookmarks
+
+# configure Firefox settings: ☰ > Settings > Find in Settings
+# - enable "Use auto-scrolling"
+# - enable "Play DRM-controlled content"
+# - enable "Tell websites not to sell or share my data"
+# - enable "Send websites a “Do Not Track” request"
+# - disable "Show trending search suggestions"
+# - disable "Suggestions from Firefox"
+# - disable "Suggestions from sponsors"
+# - disable "Suggest strong passwords"
+# - disable "Suggest Firefox Relay email masks to protect your email address"
+# - disable "Save and fill payment methods"
+# - disable "Allow Firefox to send technical and interaction data to Mozilla"
+# - disable "Allow websites to perform privacy-preserving ad measurement"
+# - disable "Block dangerous and deceptive content"
 
 # install vendor-specific drivers
 # e.g. for a Razer Blade, install OpenRazer packages:
@@ -29,42 +72,32 @@ sudo apt install -y software-properties-gtk
 sudo add-apt-repository -y ppa:openrazer/stable
 sudo apt update -y && sudo apt install --install-suggests -y openrazer-meta
 
-# install KeepassXC
-flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak install --user flathub org.keepassxc.KeePassXC
-# import your KeepassXC db file
-
-# install neovim
+# install Neovim and set as default terminal editor
 sudo add-apt-repository -y ppa:neovim-ppa/stable
 sudo apt update -y && sudo apt install -y neovim
 sudo update-alternatives --install /usr/bin/vi vi /usr/bin/nvim 60
 sudo update-alternatives --install /usr/bin/vim vim /usr/bin/nvim 60
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
 
-# install APT packages
-sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt
-# (no need to run `pipx ensurepath`, it's already set in ~/.profile)
-
 # install more APT packages (required by pyenv)
 sudo apt install -y build-essential libssl-dev zlib1g-dev \
 libbz2-dev libreadline-dev libsqlite3-dev curl git \
 libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
-
-# install ytp-dlp, Pygments
-pipx install yt-dlp[default]
-pipx install Pygments
-
 # install pyenv
 curl -fsSL https://pyenv.run | bash
 
-# install pipenv
-pip install pipenv --user
+# install ytp-dlp, Pygments, Pipenv
+pipx install yt-dlp[default]
+pipx install Pygments
+pipx install pipenv --user
 
-# copy SSH keys to .ssh and then:
-mkdir ~/.ssh/sockets
+# install Flathub & KeePassXC
+flatpak install --system flathub
+flatpak install --system org.keepassxc.KeePassXC
+# restore KeePassXC db from backup: ~/.keepassxc
 
 # install FiraMonoNerdFont
-wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/FiraMono.zip -P ~/Downloads
+wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/FiraMono.zip -P ~/Downloads
 mkdir -p ~/.fonts
 unzip ~/Downloads/FiraMono.zip -d ~/.fonts/FiraMonoNerdFont
 fc-cache -fv
@@ -72,28 +105,32 @@ fc-cache -fv
 # verify FiraMonoNerdFont installation
 fc-list | grep "FiraMono Nerd Font Mono"
 
-# install wezterm
+# install WezTerm
 curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
 echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
 sudo apt update -y && sudo apt install -y wezterm
-# below command doesn't seem to work in Mint. Set in "Preferred Applications" instead.
-#sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/open-wezterm-here 60
+# set WezTerm as the terminal in "Preferred Applications"
 
-# install vscodium
+# install VSCodium
 # see: https://vscodium.com/#use-a-package-manager-deb-rpm-provided-by-vscodium-related-repos
+# restore VSCodium extensions from backup: ~/.vscode-oss/extensions
 
 # install BeyondCompare
 wget https://www.scootersoftware.com/files/bcompare-4.4.7.28397_amd64.deb -P ~/Downloads
 sudo apt update -y && sudo apt install -y ~/Downloads/bcompare-4.4.7.28397_amd64.deb
 
-# install Joplin using the suggested method (script updates the .appimage if already present)
-# https://joplinapp.org/help/install/
-# import data, or copy old `joplin-desktop` directory to ~/.config/
+# install Joplin
+wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash
+# restore Joplin data from backup: ~/.config/joplin-desktop
 
 # set static IP for printer and test using driverless printing/scanning
 # see: https://forums.linuxmint.com/viewtopic.php?p=1663963#p1663963
 sudo gpasswd -a $USER lp
 sudo gpasswd -a $USER lpadmin
+
+# create SSH client directories
+mkdir -p ~/.ssh/sockets
+# restore SSH keys from backup: ~/.ssh
 
 # setup dotfiles
 # IMPORTANT: set GITHUB_USER to your main GitHub username
@@ -103,14 +140,22 @@ mkdir -p $SETUP_UNIX_DIR
 git clone https://github.com/CoeJoder/setup-unix.git $SETUP_UNIX_DIR
 pushd $SETUP_UNIX_DIR
 git branch -a
-git checkout Mint21_3
+git checkout Mint22_1
 
+# restore private git configs from backup: ~/.config/git
 # deploy git configs, switch to git+ssh, deploy the rest
 ./scripts/deploy_setup_unix.sh --bootstrap
 git remote set-url origin "github.com_$GITHUB_USER:CoeJoder/setup-unix.git"
 git submodule update --init --recursive
 ./scripts/deploy_setup_unix.sh --all
 popd
+
+# setup joplin sandboxing
+sed -i 's|Exec=.*|Exec=/bin/bash -c "firejail --appimage --profile=joplin --nosound "$HOME/.joplin/Joplin.AppImage""|g' ~/.local/share/applications/appimagekit-joplin.desktop
+update-desktop-database
+# start Joplin and set the backup directory to: ~/.config/joplin-desktop/JoplinBackup
+# before quitting Joplin, verify that it is listed here:
+# firejail --list
 
 # setup NodeJS
 n lts
@@ -122,17 +167,6 @@ nvim
 :TransparentEnable
 # the previous command may give innocuous error message;
 # restart neovim to see if transparency is working
-
-# setup joplin sandboxing
-sed -i 's|Exec=.*|Exec=/bin/bash -c "firejail --appimage --profile=joplin --nosound "$HOME/.joplin/Joplin.AppImage""|g' ~/.local/share/applications/appimagekit-joplin.desktop
-update-desktop-database
-# start Joplin and set the backup directory to ~/.config/joplin-desktop/JoplinBackup
-# before quitting Joplin, verify that it is listed here:
-# firejail --list
-
-# install BackInTime
-sudo add-apt-repository -y ppa:bit-team/stable
-sudo apt update -y && sudo apt install -y backintime-qt
 
 # reboot
 sudo reboot
