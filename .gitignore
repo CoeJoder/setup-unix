@@ -6,6 +6,7 @@
 !README.md
 !LICENSE
 !.setup-unix.png
+!.editorconfig
 
 # config files/folders
 !.gitignore

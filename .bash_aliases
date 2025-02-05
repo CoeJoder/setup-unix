@@ -1,8 +1,8 @@
 # projects directory
 export PROJECTS_DIR="$HOME/projects"
-if [[ ! -d $PROJECTS_DIR ]] ; then
-    mkdir -p "$PROJECTS_DIR"
-fi 
+if [[ ! -d $PROJECTS_DIR ]]; then
+	mkdir -p "$PROJECTS_DIR"
+fi
 
 # n installs node and npm
 export N_PREFIX="$HOME/.local"
@@ -35,89 +35,92 @@ source ~/.bash-git-prompt/gitprompt.sh
 # see: https://stackoverflow.com/a/48509425/159570
 ssh-add -l &>/dev/null
 if [ "$?" == 2 ]; then
-    # Could not open a connection to your authentication agent.
+	# Could not open a connection to your authentication agent.
 
-    # Load stored agent connection info.
-    test -r ~/.ssh-agent && \
-        eval "$(<~/.ssh-agent)" >/dev/null
+	# Load stored agent connection info.
+	test -r ~/.ssh-agent &&
+		eval "$(<~/.ssh-agent)" >/dev/null
 
-    ssh-add -l &>/dev/null
-    if [ "$?" == 2 ]; then
-        # Start agent and store agent connection info.
-        (umask 066; ssh-agent > ~/.ssh-agent)
-        eval "$(<~/.ssh-agent)" >/dev/null
-    fi
+	ssh-add -l &>/dev/null
+	if [ "$?" == 2 ]; then
+		# Start agent and store agent connection info.
+		(
+			umask 066
+			ssh-agent >~/.ssh-agent
+		)
+		eval "$(<~/.ssh-agent)" >/dev/null
+	fi
 fi
 
 # add a SSH key to the agent
 _ssh_add() {
-    if [ -f "$1" ]; then
-        ssh-add -t 1d "$1"
-    else
-        echo "SSH key not found: $1"
-    fi
+	if [ -f "$1" ]; then
+		ssh-add -t 1d "$1"
+	else
+		echo "SSH key not found: $1"
+	fi
 }
 
 # load Github SSH key
 gitssh() {
-    _ssh_add ~/.ssh/id_ed25519_github
+	_ssh_add ~/.ssh/id_ed25519_github
 }
 
 # load Vultr SSH key
 vultrssh() {
-    _ssh_add ~/.ssh/id_ed25519_vultr
+	_ssh_add ~/.ssh/id_ed25519_vultr
 }
 
 # work with npm in ~/.npm_globals
 npm_g() {
-    (cd ~/.npm_global && npm $@)
+	(cd ~/.npm_global && npm $@)
 }
 
 # kill all tmux session except the current one
 tmux_killall() {
-    tmux list-sessions | grep -v attached | awk 'BEGIN{FS=":"}{print $1}' | \
-        xargs -n 1 tmux kill-session -t || echo No sessions to kill
+	tmux list-sessions | grep -v attached | awk 'BEGIN{FS=":"}{print $1}' |
+		xargs -n 1 tmux kill-session -t || echo No sessions to kill
 }
 
 # print the external IP address to stdout
 whatismyip() {
-    echo "$(curl -kLs https://ipinfo.io/ip)"
+	echo "$(curl -kLs https://ipinfo.io/ip)"
 }
 
 # `read` but allows a default value
 function read_with_default() {
-    if [[ $# -lt 3 ]] ; then
-        echo "usage: read_with_default prompt default_val outvar" >&2
-        return 1
-    fi
-    local prompt="$1" default_val="$2" outvar="$3"
-    local _val
-    # cursor: save
-    echo -en "${prompt}\e[s"
-    read _val
-    if [[ -z $_val ]]; then
-        _val="$default_val"
-        # cursor: 1-up, load
-        echo -e "\e[1A\e[u${_val}"
-    fi
-    printf -v $outvar "$_val"
+	if [[ $# -lt 3 ]]; then
+		echo "usage: read_with_default prompt default_val outvar" >&2
+		return 1
+	fi
+	local prompt="$1" default_val="$2" outvar="$3"
+	local _val
+	# cursor: save
+	echo -en "${prompt}\e[s"
+	read _val
+	if [[ -z $_val ]]; then
+		_val="$default_val"
+		# cursor: 1-up, load
+		echo -e "\e[1A\e[u${_val}"
+	fi
+	printf -v $outvar "$_val"
 }
 
 # activate & mount a LUKS container
-function luks_open() (  # subshell function
-	set -Eeuo pipefail	# bash strict-mode
+function luks_open() ( # subshell function
+	set -Eeuo pipefail # bash strict-mode
 
-    blkid_output=$(blkid -t TYPE=crypto_LUKS -lo export)
-    if [[ -z $blkid_output ]]; then
-        echo "no LUKS container found" >&2
-        exit 1
-    fi
-    source <(echo "$blkid_output")
-    if [[ -z $DEVNAME ]]; then
-        echo "expected DEVNAME to be non-empty" >&2
-        exit 1
-    fi
-    read_with_default "LUKS container ($DEVNAME): " "$DEVNAME" src_container
+	blkid_output=$(blkid -t TYPE=crypto_LUKS -lo export)
+	if [[ -z $blkid_output ]]; then
+		echo "no LUKS container found" >&2
+		exit 1
+	fi
+	source <(echo "$blkid_output")
+	if [[ -z $DEVNAME ]]; then
+		echo "expected DEVNAME to be non-empty" >&2
+		exit 1
+	fi
+	read_with_default "LUKS container ($DEVNAME): " "$DEVNAME" src_container
 	if [[ -z $src_container ]]; then
 		echo "no container specified" >&2
 		exit 1
@@ -139,19 +142,19 @@ function luks_open() (  # subshell function
 
 # deactivate & unmount a LUKS container
 function luks_close() ( # subshell function
-	set -Eeuo pipefail	# bash strict-mode
+	set -Eeuo pipefail # bash strict-mode
 
-    blkid_output=$(blkid -t TYPE=crypto_LUKS -lo export)
-    if [[ -z $blkid_output ]]; then
-        echo "no LUKS container found" >&2
-        exit 1
-    fi
-    source <(echo "$blkid_output")
-    if [[ -z $DEVNAME ]]; then
-        echo "expected DEVNAME to be non-empty" >&2
-        exit 1
-    fi
-    read_with_default "LUKS container ($DEVNAME): " "$DEVNAME" src_container
+	blkid_output=$(blkid -t TYPE=crypto_LUKS -lo export)
+	if [[ -z $blkid_output ]]; then
+		echo "no LUKS container found" >&2
+		exit 1
+	fi
+	source <(echo "$blkid_output")
+	if [[ -z $DEVNAME ]]; then
+		echo "expected DEVNAME to be non-empty" >&2
+		exit 1
+	fi
+	read_with_default "LUKS container ($DEVNAME): " "$DEVNAME" src_container
 	if [[ -z $src_container ]]; then
 		echo "no container specified" >&2
 		exit 1
@@ -166,45 +169,44 @@ function luks_close() ( # subshell function
 	# unmount container and deactivate it
 	sudo umount "$mount_point"
 	sudo cryptsetup close "$name"
-    sudo eject "$src_container"
+	sudo eject "$src_container"
 )
 
 # in-place shell selection list
 # source: https://askubuntu.com/a/1386907
 # (with minor syntax changes to fix vscode syntax highlighting)
 function choose_from_menu() {
-    local prompt="$1" outvar="$2"
-    shift
-    shift
-    local options=("$@") cur=0 count=${#options[@]} index=0
-    local esc=$(echo -en "\e") # cache ESC as test doesn't allow esc codes
-    printf "$prompt\n"
-    while true
-    do
-        # list all options (option list is zero-based)
-        index=0 
-        for o in "${options[@]}"
-        do
-            if [ "$index" == "$cur" ]
-            then echo -e " >\e[7m$o\e[0m" # mark & highlight the current option
-            else echo "  $o"
-            fi
-            index=$(( $index + 1 ))
-        done
-        read -s -n3 key # wait for user to key in arrows or ENTER
-        if [[ $key == "$esc[A" ]] # up arrow
-        then cur=$(( $cur - 1 ))
-            [ "$cur" -lt 0 ] && cur=0
-        elif [[ $key == "$esc[B" ]] # down arrow
-        then cur=$(( $cur + 1 ))
-            [ "$cur" -ge $count ] && cur=$(( $count - 1 ))
-        elif [[ $key == "" ]] # nothing, i.e the read delimiter - ENTER
-        then break
-        fi
-        echo -en "\e[${count}A" # go up to the beginning to re-render
-    done
-    # export the selection to the requested output variable
-    printf -v $outvar "${options[$cur]}"
+	local prompt="$1" outvar="$2"
+	shift
+	shift
+	local options=("$@") cur=0 count=${#options[@]} index=0
+	local esc=$(echo -en "\e") # cache ESC as test doesn't allow esc codes
+	printf "$prompt\n"
+	while true; do
+		# list all options (option list is zero-based)
+		index=0
+		for o in "${options[@]}"; do
+			if [ "$index" == "$cur" ]; then
+				echo -e " >\e[7m$o\e[0m" # mark & highlight the current option
+			else
+				echo "  $o"
+			fi
+			index=$(($index + 1))
+		done
+		read -s -n3 key                 # wait for user to key in arrows or ENTER
+		if [[ $key == "$esc[A" ]]; then # up arrow
+			cur=$(($cur - 1))
+			[ "$cur" -lt 0 ] && cur=0
+		elif [[ $key == "$esc[B" ]]; then # down arrow
+			cur=$(($cur + 1))
+			[ "$cur" -ge $count ] && cur=$(($count - 1))
+		elif [[ $key == "" ]]; then # nothing, i.e the read delimiter - ENTER
+			break
+		fi
+		echo -en "\e[${count}A" # go up to the beginning to re-render
+	done
+	# export the selection to the requested output variable
+	printf -v $outvar "${options[$cur]}"
 }
 
 # escapes arbitrary strings for use in sed regex
@@ -213,192 +215,195 @@ function escape_sed_regex() { sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' 
 
 # given a gitssh endpoint, clones the repo according to gitdir/ssh-user mappings
 function gitssh_clone() {
-    # NOTE current impl assumes particular structure of config file;
-    # could move to python and parse with GitPython or ConfigParser
-    local git_config="$HOME/.config/git/config"
-    if [[ ! -f $git_config ]] ; then
-        echo "$git_config not found" >&2
-        return 1
-    fi
-    if [[ $# -lt 1 ]] ; then
-        echo "usage: gitssh-clone [git-clone_options] gitssh-endpoint" >&2
-        echo "       gitssh-clone --dry-run gitssh-endpoint" >&2
-        return 1
-    fi
-    if [[ $# -gt 1 ]] ; then
-        local git_options="${@: 1:$#-1}"
-    fi
-    local endpoint="${@: -1}"
-    # parse the endpoint argument
-    local regex='git@([^:]*):([^/]*)/(.*?)\.git'
-    if [[ ! $endpoint =~ $regex ]]; then
-        echo "unrecognized gitssh-endpoint format" >&2
-        return 1
-    fi
-    local site=${BASH_REMATCH[1]}
-    local remote_gituser=${BASH_REMATCH[2]}
-    local project=${BASH_REMATCH[3]}
-    local escaped_site=$(escape_sed_regex "$site");
-    local -A users_to_dirs
-    local _cur_user
-    local _i=0
-    while read -r _line; do
-        if [[ $((_i % 2)) -eq 0 ]] ; then
-            _cur_user=$_line
-        else
-            users_to_dirs[$_cur_user]=$_line
-        fi
-        ((_i++))
-    done < <(sed -n \
-        -re "s|~|$HOME|" \
-        -re '/\[includeIf "gitdir:/{s|\[.*:(.*)/\**".*|\1|;h;d;n}' \
-        -re "\|path\s*=.*/\.config/git/.*-$escaped_site\.config|{s|.*/(.*)-$escaped_site\.config|\1|p;x;p}" \
-        "$git_config")
-    if (( ${#users_to_dirs[@]} == 0 )) ; then
-        echo "no $site users found in $git_config" >&2
-        return 1
-    fi
-    local local_gituser
-    choose_from_menu "Local git user:" local_gituser "${!users_to_dirs[@]}"
-    if [[ -z $local_gituser ]] ; then
-        echo "invalid username" >&2
-        return 1
-    fi
-    new_endpoint="${site}_$local_gituser:$remote_gituser/$project.git"
-    dest_dir="${users_to_dirs[$local_gituser]}/$project"
-    if [[ $git_options == '--dry-run' ]] ; then
-        printf "%s\n%s\n" "Repository: $new_endpoint" "Directory: $dest_dir"
-    else
-        # clone into the mapped directory using the rewritten endpoint
-        echo -e "Site: $site\nProject: $remote_gituser/$project"
-        read -p "Clone into $dest_dir? (y/N): " confirm \
-            && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || return 1
-        git clone $git_options "$new_endpoint" "$dest_dir" \
-            || return
-        echo "pushd..."
-        pushd "$dest_dir" > /dev/null
-    fi
+	# NOTE current impl assumes particular structure of config file;
+	# could move to python and parse with GitPython or ConfigParser
+	local git_config="$HOME/.config/git/config"
+	if [[ ! -f $git_config ]]; then
+		echo "$git_config not found" >&2
+		return 1
+	fi
+	if [[ $# -lt 1 ]]; then
+		echo "usage: gitssh-clone [git-clone_options] gitssh-endpoint" >&2
+		echo "       gitssh-clone --dry-run gitssh-endpoint" >&2
+		return 1
+	fi
+	if [[ $# -gt 1 ]]; then
+		local git_options="${@:1:$#-1}"
+	fi
+	local endpoint="${@: -1}"
+	# parse the endpoint argument
+	local regex='git@([^:]*):([^/]*)/(.*?)\.git'
+	if [[ ! $endpoint =~ $regex ]]; then
+		echo "unrecognized gitssh-endpoint format" >&2
+		return 1
+	fi
+	local site=${BASH_REMATCH[1]}
+	local remote_gituser=${BASH_REMATCH[2]}
+	local project=${BASH_REMATCH[3]}
+	local escaped_site=$(escape_sed_regex "$site")
+	local -A users_to_dirs
+	local _cur_user
+	local _i=0
+	while read -r _line; do
+		if [[ $((_i % 2)) -eq 0 ]]; then
+			_cur_user=$_line
+		else
+			users_to_dirs[$_cur_user]=$_line
+		fi
+		((_i++))
+	done < <(sed -n \
+		-re "s|~|$HOME|" \
+		-re '/\[includeIf "gitdir:/{s|\[.*:(.*)/\**".*|\1|;h;d;n}' \
+		-re "\|path\s*=.*/\.config/git/.*-$escaped_site\.config|{s|.*/(.*)-$escaped_site\.config|\1|p;x;p}" \
+		"$git_config")
+	if ((${#users_to_dirs[@]} == 0)); then
+		echo "no $site users found in $git_config" >&2
+		return 1
+	fi
+	local local_gituser
+	choose_from_menu "Local git user:" local_gituser "${!users_to_dirs[@]}"
+	if [[ -z $local_gituser ]]; then
+		echo "invalid username" >&2
+		return 1
+	fi
+	new_endpoint="${site}_$local_gituser:$remote_gituser/$project.git"
+	dest_dir="${users_to_dirs[$local_gituser]}/$project"
+	if [[ $git_options == '--dry-run' ]]; then
+		printf "%s\n%s\n" "Repository: $new_endpoint" "Directory: $dest_dir"
+	else
+		# clone into the mapped directory using the rewritten endpoint
+		echo -e "Site: $site\nProject: $remote_gituser/$project"
+		read -p "Clone into $dest_dir? (y/N): " confirm &&
+			[[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || return 1
+		git clone $git_options "$new_endpoint" "$dest_dir" ||
+			return
+		echo "pushd..."
+		pushd "$dest_dir" >/dev/null
+	fi
 }
 
 # terminal-only, url-aware alternative to `pygmentize` with enhanced lexer guessing
 function pygterminize() {
-    local pygments_python="$HOME/.local/pipx/venvs/pygments/bin/python"
-    local pygterminize="$HOME/scripts/pygterminize.py"
-    if [[ ! -f $pygments_python ]] ; then
-        echo "not found: $pygments_python" >&2
-        return 1
-    fi
-    if [[ ! -f $pygterminize ]] ; then
-        echo "not found: $pygterminize" >&2
-        return 1
-    fi
-    "$pygments_python" "$pygterminize" $@
+	local pygments_python="$HOME/.local/pipx/venvs/pygments/bin/python"
+	local pygterminize="$HOME/scripts/pygterminize.py"
+	if [[ ! -f $pygments_python ]]; then
+		echo "not found: $pygments_python" >&2
+		return 1
+	fi
+	if [[ ! -f $pygterminize ]]; then
+		echo "not found: $pygterminize" >&2
+		return 1
+	fi
+	"$pygments_python" "$pygterminize" $@
 }
 
 # fetch and pygmentize a URL document to stdout
 function pyget() {
-    if ! type -P wget >/dev/null 2>&1; then
-        echo "command 'wget' not found" >&2
-        return 1
-    fi
-    if [[ $# -ne 1 ]] ; then
-        echo "usage: pyget url" >&2
-        return 1
-    fi
-    local url="$1"
-    (
-        set -euo pipefail
-        wget -q --show-progress -O - "$url" | pygterminize -u "$url"
-    )
+	if ! type -P wget >/dev/null 2>&1; then
+		echo "command 'wget' not found" >&2
+		return 1
+	fi
+	if [[ $# -ne 1 ]]; then
+		echo "usage: pyget url" >&2
+		return 1
+	fi
+	local url="$1"
+	(
+		set -euo pipefail
+		wget -q --show-progress -O - "$url" | pygterminize -u "$url"
+	)
 }
 
 # fetch and pygmentize a URL document to less
 function lessget() {
-    if [[ $# -lt 1 ]] ; then
-        echo "usage: lessget [less_options] url" >&2
-        return 1
-    fi
-    if [[ $# -gt 1 ]] ; then
-        local less_options="${@: 1:$#-1}"
-    fi
-    local url="${@: -1}"
-    # use a temp file to handle large docs
-    (
-        set -eo pipefail
-        tempfile=$(mktemp)
-        trap "rm -f ${tempfile@Q}" EXIT
-        pyget "$url" > "$tempfile"
-        less $less_options "$tempfile"
-    )
+	if [[ $# -lt 1 ]]; then
+		echo "usage: lessget [less_options] url" >&2
+		return 1
+	fi
+	if [[ $# -gt 1 ]]; then
+		local less_options="${@:1:$#-1}"
+	fi
+	local url="${@: -1}"
+	# use a temp file to handle large docs
+	(
+		set -eo pipefail
+		tempfile=$(mktemp)
+		trap "rm -f ${tempfile@Q}" EXIT
+		pyget "$url" >"$tempfile"
+		less $less_options "$tempfile"
+	)
 }
 
 # get the most recent file in the tree
 # source: https://stackoverflow.com/a/38996701/159570
 function get_latest_file() {
-    local dir=${1:-.}
-    readarray -t -d '' files < <(LC_ALL=C find "$dir" -name . -o -name '.*' \
-        -prune -o -type f -printf '%T@/%p\0' | sort -rzn | cut -zd/ -f2-)
-    ((${#files[@]} > 0)) && printf '%s\n' "${files[0]}"
+	local dir=${1:-.}
+	readarray -t -d '' files < <(LC_ALL=C find "$dir" -name . -o -name '.*' \
+		-prune -o -type f -printf '%T@/%p\0' | sort -rzn | cut -zd/ -f2-)
+	((${#files[@]} > 0)) && printf '%s\n' "${files[0]}"
 }
 
 # copy to clipboard the most recent receipt path as a spreadsheet hyperlink
 function get_receipt() {
-    local receipts_dir="$HOME/Documents/Receipts"
-    local latest_file=$(get_latest_file "$receipts_dir")
-    local full_path=$(realpath "$latest_file")
-    local base_name=$(basename "$latest_file")
-    local output="=HYPERLINK(\"${full_path}\", \"${base_name}\")"
-    printf "%s" "$output" | xclip -selection clipboard
-    echo "Copied to clipboard: $output"
+	local receipts_dir="$HOME/Documents/Receipts"
+	local latest_file=$(get_latest_file "$receipts_dir")
+	local full_path=$(realpath "$latest_file")
+	local base_name=$(basename "$latest_file")
+	local output="=HYPERLINK(\"${full_path}\", \"${base_name}\")"
+	printf "%s" "$output" | xclip -selection clipboard
+	echo "Copied to clipboard: $output"
 }
 
 # copy to clipboard a spreadsheet hyperlink constructed in the shell
 function to_hyperlink() {
-    if [[ $# -ne 2 ]]; then
-        echo "usage: to_hyperlink path name"
-        return 1
-    fi
-    local path="$1" name="$2"
-    local output="=HYPERLINK(\"${path}\", \"${name}\")"
-    printf "%s" "$output" | xclip -selection clipboard
-    echo "Copied to clipboard: $output"
+	if [[ $# -ne 2 ]]; then
+		echo "usage: to_hyperlink path name"
+		return 1
+	fi
+	local path="$1" name="$2"
+	local output="=HYPERLINK(\"${path}\", \"${name}\")"
+	printf "%s" "$output" | xclip -selection clipboard
+	echo "Copied to clipboard: $output"
 }
 
 # launch media player from shell-based folder selector
 function play_music_shuffled() {
-    local music_dirs chosen_dir
-    local root_dir="$HOME/Music"
-    if [[ $# -gt 0 ]]; then
-        root_dir="$1"
-        if [[ ! -d $root_dir ]]; then
-            echo "Directory not found: $root_dir" >&2
-            return 1
-        fi
-    fi
-    readarray -t music_dirs < <(find "$root_dir" -maxdepth 1 -type d -printf '%p\n')
-    choose_from_menu "Make your selection:" chosen_dir "${music_dirs[@]}"
-    (celluloid --mpv-shuffle --mpv-fullscreen "$chosen_dir" & >/dev/null)
+	local music_dirs chosen_dir
+	local root_dir="$HOME/Music"
+	if [[ $# -gt 0 ]]; then
+		root_dir="$1"
+		if [[ ! -d $root_dir ]]; then
+			echo "Directory not found: $root_dir" >&2
+			return 1
+		fi
+	fi
+	readarray -t music_dirs < <(find "$root_dir" -maxdepth 1 -type d -printf '%p\n')
+	choose_from_menu "Make your selection:" chosen_dir "${music_dirs[@]}"
+	(
+		celluloid --mpv-shuffle --mpv-fullscreen "$chosen_dir" &
+		>/dev/null
+	)
 }
 
 # launch media player for 1337 h4cker jamz
 function robot_ears() {
-    play_music_shuffled "$HOME/Music/Programming Music"
+	play_music_shuffled "$HOME/Music/Programming Music"
 }
 
 # simple codium launcher which caches path argument
 function code() {
-    local last_proj_file="$HOME/.last_codium_project"
-    local codium_arg=''
-    if [[ $# -eq 0 ]]; then
-        if [[ -f $last_proj_file ]]; then
-            codium_arg="$(<"$last_proj_file")"
-        fi
-    else
-        codium_arg="$(realpath "$1")"
-        printf '%s' "$codium_arg" > "$last_proj_file"
-    fi
-    [[ -n $codium_arg ]] && pushd "$codium_arg" &>/dev/null
-    codium "$codium_arg"
+	local last_proj_file="$HOME/.last_codium_project"
+	local codium_arg=''
+	if [[ $# -eq 0 ]]; then
+		if [[ -f $last_proj_file ]]; then
+			codium_arg="$(<"$last_proj_file")"
+		fi
+	else
+		codium_arg="$(realpath "$1")"
+		printf '%s' "$codium_arg" >"$last_proj_file"
+	fi
+	[[ -n $codium_arg ]] && pushd "$codium_arg" &>/dev/null
+	codium "$codium_arg"
 }
 
 # start tmux with the current environment
