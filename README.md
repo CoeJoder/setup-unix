@@ -40,8 +40,12 @@ sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt backintime
 # add Clock desklet and set custom format
 # - Date format: %A, %b %-d, %-I:%M %p
 
-# set "List View" as default in Nemo (file manager)
-# - Edit > Preferences > Views
+# set Files default view: Edit > Preferences > Views
+# - View new folders using: "List View"
+# - enable "Inherit view type from parent"
+
+# add Keyboard shortcut bindings: Shortcuts
+# - Minimize window: ❖ + M
 
 # launch Firefox Profile Manager
 firefox -P
