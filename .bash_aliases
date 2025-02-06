@@ -284,7 +284,7 @@ function gitssh_clone() {
 
 # terminal-only, url-aware alternative to `pygmentize` with enhanced lexer guessing
 function pygterminize() {
-	local pygments_python="$HOME/.local/pipx/venvs/pygments/bin/python"
+	local pygments_python="$HOME/.local/share/pipx/venvs/pygments/bin/python"
 	local pygterminize="$HOME/scripts/pygterminize.py"
 	if [[ ! -f $pygments_python ]]; then
 		echo "not found: $pygments_python" >&2
