@@ -86,10 +86,11 @@ libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-d
 # install pyenv
 curl -fsSL https://pyenv.run | bash
 
-# install ytp-dlp, Pygments, Pipenv
+# install ytp-dlp, Pygments, Pipenv, ruff
 pipx install yt-dlp[default]
 pipx install Pygments
 pipx install pipenv --user
+pipx install ruff
 
 # install Flathub & KeePassXC
 flatpak install --system flathub
