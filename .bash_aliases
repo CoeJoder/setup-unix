@@ -380,7 +380,8 @@ function play_music_shuffled() {
 	readarray -t music_dirs < <(find "$root_dir" -maxdepth 1 -type d -printf '%p\n')
 	choose_from_menu "Make your selection:" chosen_dir "${music_dirs[@]}"
 	(
-		celluloid --mpv-shuffle --mpv-fullscreen "$chosen_dir" &
+		shopt -s extglob globstar nocasematch
+		celluloid --mpv-shuffle --mpv-fullscreen "$chosen_dir/"**/*(*.flac|*.mp3|*.aac|*.wav|*.ogg|*.opus|*.m4a|*.mp4|*.webm|*.mkv) &
 		>/dev/null
 	)
 }
