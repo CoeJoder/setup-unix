@@ -121,8 +121,9 @@ sudo apt update -y && sudo apt install -y wezterm
 # restore VSCodium extensions from backup: ~/.vscode-oss/extensions
 
 # install BeyondCompare
-wget https://www.scootersoftware.com/files/bcompare-4.4.7.28397_amd64.deb -P ~/Downloads
-sudo apt update -y && sudo apt install -y ~/Downloads/bcompare-4.4.7.28397_amd64.deb
+wget https://www.scootersoftware.com/files/bcompare-5.0.5.30614_amd64.deb -P ~/Downloads
+sudo apt update -y && sudo apt install -y ~/Downloads/bcompare-5.0.5.30614_amd64.deb
+# import BeyondCompare license key: Help > Enter key…
 
 # install Joplin
 wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash
