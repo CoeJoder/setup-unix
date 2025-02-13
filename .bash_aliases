@@ -407,5 +407,42 @@ function code() {
 	codium "$codium_arg"
 }
 
+# create a bounce-loop of a media file with filename like `foo-bounced.bar`
+function bounce_loop() {
+	if (( $# != 1 && $# != 2 )); then
+		echo "usage: bounce_loop input [numLoops=0]" >&2
+		return 1
+	fi
+	local input="$(realpath "$1")"
+	shift
+	local numLoops="${1:-0}"
+	local frames="$(ffprobe -v error -select_streams v:0 -count_frames -show_entries stream=nb_read_frames -print_format csv="p=0" "$input")"
+	local duration="$(ffprobe -i "$input" -show_entries format=duration -v quiet -of csv="p=0")"
+	local framerate="$(python3 -c "print(round($frames / $duration))")"
+	local bouncelen="$(python3 -c "print(round($framerate * (2 * $duration)))")"
+	local parent="$(dirname "$input")"
+	local basename="$(basename "$input")"
+	local stem="${basename%%.*}"
+	local ext="${basename#*.}"
+	local output="$parent/$stem-bounced.$ext"
+	ffmpeg -i "$input" -filter_complex "[0]reverse[r];[0][r]concat,loop=$numLoops:$bouncelen,setpts=N/$framerate/TB" "$output"
+	echo "Output: $output"
+}
+
+# invoke command for each file in current dir like so: `command "file" args`
+function for_all() {
+	if (( $# < 1 )); then
+		echo "usage: for_all command [args]" >&2
+		return 1
+	fi
+	local command="$1"
+	shift
+	local args="$@"
+	readarray -d '' files < <(find . -maxdepth 1 -type f -print0)
+	for file in "${files[@]}"; do
+		$command "$file" $@
+	done
+}
+
 # start tmux with the current environment
 if [ "$TMUX" = "" ] && [ "$SKIP_TMUX" != 0 ]; then tmux -L default; fi
