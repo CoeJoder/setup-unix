@@ -69,6 +69,9 @@ firefox -P
 # - disable "Allow websites to perform privacy-preserving ad measurement"
 # - disable "Block dangerous and deceptive content"
 
+# configure Firefox advanced preferences: `about:config`
+# full-screen-api.warning.timeout = 0
+
 # install vendor-specific drivers
 # e.g. for a Razer Blade, install OpenRazer packages:
 # see: https://openrazer.github.io/#ubuntu
