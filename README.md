@@ -47,6 +47,9 @@ sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt backintime
 # add Keyboard shortcut bindings: Shortcuts
 # - Minimize window: ❖ + M
 
+# configure Mouse and Touchpad settings: Mouse > General
+# - disable "Paste the current selection when middle-click is pressed"
+
 # launch Firefox Profile Manager
 firefox -P
 # for each profile to restore:
@@ -70,7 +73,8 @@ firefox -P
 # - disable "Block dangerous and deceptive content"
 
 # configure Firefox advanced preferences: `about:config`
-# full-screen-api.warning.timeout = 0
+# - full-screen-api.warning.timeout = 0
+# - middlemouse.paste = false
 
 # install vendor-specific drivers
 # e.g. for a Razer Blade, install OpenRazer packages:
