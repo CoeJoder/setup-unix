@@ -159,12 +159,16 @@ git submodule update --init --recursive
 ./scripts/deploy_setup_unix.sh --all
 popd
 
-# setup joplin sandboxing
+# setup Joplin sandboxing
 sed -i 's|Exec=.*|Exec=/bin/bash -c "firejail --appimage --profile=joplin --nosound "$HOME/.joplin/Joplin.AppImage""|g' ~/.local/share/applications/appimagekit-joplin.desktop
 update-desktop-database
 # start Joplin and set the backup directory to: ~/.config/joplin-desktop/JoplinBackup
 # before quitting Joplin, verify that it is listed here:
 # firejail --list
+
+# enable autoscroll on Chromium
+sudo sed -ri 's|Exec=(.*)|Exec=\1 --enable-blink-features=MiddleClickAutoscroll|g' /usr/share/applications/chromium-browser.desktop
+update-desktop-database
 
 # setup NodeJS
 n lts
