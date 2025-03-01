@@ -381,8 +381,7 @@ function play_music_shuffled() {
 	choose_from_menu "Make your selection:" chosen_dir "${music_dirs[@]}"
 	(
 		shopt -s extglob globstar nocasematch
-		celluloid --mpv-shuffle --mpv-fullscreen "$chosen_dir/"**/*(*.flac|*.mp3|*.aac|*.wav|*.ogg|*.opus|*.m4a|*.mp4|*.webm|*.mkv) &
-		>/dev/null
+		celluloid --mpv-shuffle --mpv-fullscreen "$chosen_dir"/**/*(*.flac|*.mp3|*.aac|*.wav|*.ogg|*.opus|*.m4a|*.mp4|*.webm|*.mkv) >/dev/null &
 	)
 }
 
@@ -409,7 +408,7 @@ function code() {
 
 # create a bounce-loop of a media file with filename like `foo-bounced.bar`
 function bounce_loop() {
-	if (( $# != 1 && $# != 2 )); then
+	if (($# != 1 && $# != 2)); then
 		echo "usage: bounce_loop input [numLoops=0]" >&2
 		return 1
 	fi
@@ -431,7 +430,7 @@ function bounce_loop() {
 
 # invoke command for each file in current dir like so: `command "file" args`
 function for_all() {
-	if (( $# < 1 )); then
+	if (($# < 1)); then
 		echo "usage: for_all command [args]" >&2
 		return 1
 	fi
