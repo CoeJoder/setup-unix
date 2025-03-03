@@ -366,7 +366,7 @@ function to_hyperlink() {
 	echo "Copied to clipboard: $output"
 }
 
-# launch media player from shell-based folder selector
+# launch media player with all media files in the given directory tree added to the playlist
 function play_music_shuffled() {
 	local music_dirs chosen_dir
 	local root_dir="$HOME/Music"
@@ -379,10 +379,8 @@ function play_music_shuffled() {
 	fi
 	readarray -t music_dirs < <(find "$root_dir" -maxdepth 1 -type d -printf '%p\n')
 	choose_from_menu "Make your selection:" chosen_dir "${music_dirs[@]}"
-	(
-		shopt -s extglob globstar nocasematch
-		celluloid --mpv-shuffle --mpv-fullscreen "$chosen_dir"/**/*(*.flac|*.mp3|*.aac|*.wav|*.ogg|*.opus|*.m4a|*.mp4|*.webm|*.mkv) >/dev/null &
-	)
+	readarray -d '' chosen_files < <(find "$chosen_dir" -regextype posix-extended -iregex '.*\.(flac|mp3|aac|wav|ogg|opus|m4a|mp4|webm|mkv)' -type f -print0)
+	celluloid --mpv-shuffle --mpv-fullscreen "${chosen_files[@]}" >/dev/null &
 }
 
 # launch media player for 1337 h4cker jamz
