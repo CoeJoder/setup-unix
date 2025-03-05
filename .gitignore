@@ -67,6 +67,7 @@ scripts/*
 !scripts/pygterminize.py
 !scripts/deploy_setup_unix.sh
 !scripts/excludes.txt
+!scripts/for_each.sh
 
 !.ssh
 .ssh/*

@@ -31,6 +31,12 @@ GIT_PROMPT_ONLY_IN_REPO=0
 GIT_PROMPT_FETCH_REMOTE_STATUS=0
 source ~/.bash-git-prompt/gitprompt.sh
 
+# common regex e.g. used with `find`
+REGEX_TYPE='posix-extended'
+REGEX_AUDIO='.*\.(flac|mp3|aac|wav|ogg|opus|m4a)'
+REGEX_VIDEO='.*\.(mp4|webm|mkv)'
+REGEX_AV='.*\.(flac|mp3|aac|wav|ogg|opus|m4a|mp4|webm|mkv)'
+
 # ensure agent is running
 # see: https://stackoverflow.com/a/48509425/159570
 ssh-add -l &>/dev/null
@@ -379,7 +385,7 @@ function play_music_shuffled() {
 	fi
 	readarray -t music_dirs < <(find "$root_dir" -maxdepth 1 -type d -printf '%p\n')
 	choose_from_menu "Make your selection:" chosen_dir "${music_dirs[@]}"
-	readarray -d '' chosen_files < <(find "$chosen_dir" -regextype posix-extended -iregex '.*\.(flac|mp3|aac|wav|ogg|opus|m4a|mp4|webm|mkv)' -type f -print0)
+	readarray -d '' chosen_files < <(find "$chosen_dir" -regextype "$REGEX_TYPE" -iregex "$REGEX_AV" -type f -print0)
 	celluloid --mpv-shuffle --mpv-fullscreen "${chosen_files[@]}" >/dev/null &
 }
 
@@ -426,19 +432,36 @@ function bounce_loop() {
 	echo "Output: $output"
 }
 
-# invoke command for each file in current dir like so: `command "file" args`
-function for_all() {
-	if (($# < 1)); then
-		echo "usage: for_all command [args]" >&2
-		return 1
+# invoke command for each file found in current dir like so: `command file args`
+function for_each() (		# subshell
+	local for_each_sh="$HOME/scripts/for_each.sh"
+	if [[ -x $for_each_sh ]]; then
+		source "$for_each_sh" "$@"
+	else
+		echo "executable not found: $for_each_sh" >&2
 	fi
-	local command="$1"
-	shift
-	local args="$@"
-	readarray -d '' files < <(find . -maxdepth 1 -type f -print0)
-	for file in "${files[@]}"; do
-		$command "$file" $@
-	done
+)
+
+# yes-or-no prompt
+# 'no' is always falsey (returns 1)
+# source: https://github.com/CoeJoder/ethereum-node/blob/master/src/common.sh
+function yes_or_no() {
+	local confirm
+	if [[ $# -ne 2 || ($1 != '--default-yes' && $1 != '--default-no') ]]; then
+		echo 'usage: yes_or_no {--default-yes|--default-no} prompt' >&2
+		return 2
+	fi
+	if [[ $1 == '--default-yes' ]]; then
+		read -p "$2 (Y/n): " confirm
+		if [[ $confirm == [nN] || $confirm == [nN][oO] ]]; then
+			return 1
+		fi
+	else
+		read -p "$2 (y/N): " confirm
+		if [[ $confirm != [yY] && $confirm != [yY][eE][sS] ]]; then
+			return 1
+		fi
+	fi
 }
 
 # start tmux with the current environment
