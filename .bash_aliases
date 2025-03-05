@@ -413,9 +413,9 @@ function bounce_loop() {
 	local input="$(realpath "$1")"
 	shift
 	local numLoops="${1:-0}"
-	local frames="$(ffprobe -v error -select_streams v:0 -count_frames -show_entries stream=nb_read_frames -print_format csv="p=0" "$input")"
+	local framerate_fraction=$(ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=nw=1:nk=1 "$input")
+	local framerate="$(python3 -c "print(round(${framerate_fraction}))")"
 	local duration="$(ffprobe -i "$input" -show_entries format=duration -v quiet -of csv="p=0")"
-	local framerate="$(python3 -c "print(round($frames / $duration))")"
 	local bouncelen="$(python3 -c "print(round($framerate * (2 * $duration)))")"
 	local parent="$(dirname "$input")"
 	local basename="$(basename "$input")"
