@@ -386,7 +386,8 @@ function play_music_shuffled() {
 	readarray -t music_dirs < <(find "$root_dir" -maxdepth 1 -type d -printf '%p\n')
 	choose_from_menu "Make your selection:" chosen_dir "${music_dirs[@]}"
 	readarray -d '' chosen_files < <(find "$chosen_dir" -regextype "$REGEX_TYPE" -iregex "$REGEX_AV" -type f -print0)
-	celluloid --mpv-shuffle --mpv-fullscreen "${chosen_files[@]}" >/dev/null &
+	# TODO passing files as expanded-array doesn't shuffle, but globbing does
+	celluloid --mpv-shuffle --mpv-fullscreen "${chosen_files[@]}" & >/dev/null
 }
 
 # launch media player for 1337 h4cker jamz
@@ -435,11 +436,11 @@ function bounce_loop() {
 # invoke command for each file found in current dir like so: `command file args`
 function for_each() (		# subshell
 	local for_each_sh="$HOME/scripts/for_each.sh"
-	if [[ -x $for_each_sh ]]; then
-		source "$for_each_sh" "$@"
-	else
+	if [[ ! -x $for_each_sh ]]; then
 		echo "executable not found: $for_each_sh" >&2
+		return 1
 	fi
+	source "$for_each_sh" "$@"
 )
 
 # yes-or-no prompt
