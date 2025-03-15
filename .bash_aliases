@@ -387,7 +387,7 @@ function play_music_shuffled() {
 	choose_from_menu "Make your selection:" chosen_dir "${music_dirs[@]}"
 	readarray -d '' chosen_files < <(find "$chosen_dir" -regextype "$REGEX_TYPE" -iregex "$REGEX_AV" -type f -print0)
 	# TODO passing files as expanded-array doesn't shuffle, but globbing does
-	celluloid --mpv-shuffle --mpv-fullscreen "${chosen_files[@]}" & >/dev/null
+	(celluloid --mpv-shuffle --mpv-fullscreen "${chosen_files[@]}" & >/dev/null)
 }
 
 # launch media player for 1337 h4cker jamz
@@ -442,6 +442,16 @@ function for_each() (		# subshell
 	fi
 	source "$for_each_sh" "$@"
 )
+
+# concatenate .mp4 files in the current directory by name substring
+function ffconcat() {
+	if (($# != 1)); then
+		echo "usage: ffconcat name"
+		return 1
+	fi
+	local name="$1"
+	ffmpeg -f concat -safe 0 -i <(for f in *$name*.mp4; do echo "file '$PWD/$f'"; done) -c copy "${name}_$(date +%Y%m%d_%H%M%S).mp4"
+}
 
 # yes-or-no prompt
 # 'no' is always falsey (returns 1)
