@@ -446,11 +446,35 @@ function for_each() (		# subshell
 # concatenate .mp4 files in the current directory by name substring
 function ffconcat() {
 	if (($# != 1)); then
-		echo "usage: ffconcat name"
+		echo "usage: ffconcat name" >&2
 		return 1
 	fi
 	local name="$1"
 	ffmpeg -f concat -safe 0 -i <(for f in *$name*.mp4; do echo "file '$PWD/$f'"; done) -c copy "${name}_$(date +%Y%m%d_%H%M%S).mp4"
+}
+
+# repeat call to `yt-dlp` until consecutive failures reach timeout
+function repeat_yt_dlp() {
+	if ! type -P yt-dlp >/dev/null 2>&1; then
+		echo "command 'yt-dlp' not found" >&2
+		return 1
+	fi
+	if (($# != 1 && $# != 2)); then
+		echo "usage: repeat_yt_dlp url [timeout=300]" >&2
+		return 1
+	fi
+	local url="$1"
+	shift
+	local timeout="${1:-300}" sleeptime=3
+	local failcount=0 failmax=$(python3 -c "print(round($timeout / $sleeptime))")
+	while true; do
+		if ! yt-dlp "$url"; then
+			((++failcount >= failmax)) && break
+		else
+			failcount=0
+		fi
+		sleep $sleeptime
+	done
 }
 
 # yes-or-no prompt
@@ -462,13 +486,14 @@ function yes_or_no() {
 		echo 'usage: yes_or_no {--default-yes|--default-no} prompt' >&2
 		return 2
 	fi
-	if [[ $1 == '--default-yes' ]]; then
-		read -p "$2 (Y/n): " confirm
+	local default_opt="$1" prompt="$2" confirm
+	if [[ $default_opt == '--default-yes' ]]; then
+		read -p "$prompt (Y/n): " confirm
 		if [[ $confirm == [nN] || $confirm == [nN][oO] ]]; then
 			return 1
 		fi
 	else
-		read -p "$2 (y/N): " confirm
+		read -p "$prompt (y/N): " confirm
 		if [[ $confirm != [yY] && $confirm != [yY][eE][sS] ]]; then
 			return 1
 		fi
