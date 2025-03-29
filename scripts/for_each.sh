@@ -14,7 +14,7 @@ unset _parsed_args
 function usage() {
 	cat >&2 <<-EOF
 		Usage:
-			$(basename ${BASH_SOURCE[0]}) [options] command [args[a1, a2, ...]]
+			$(basename ${BASH_SOURCE[0]}) [options] command [args...]
 		Options:
 		  --type c						Match files of type c; defaults to 'f' (see \`find -type\`)
 		  --regex pattern			File name matches regular expression pattern using 'posix-extended' syntax (see \`find -regex\`)
@@ -62,13 +62,13 @@ while true; do
 done
 
 # parse positional args
-command="$1"
-shift
-args="$@"
-if [[ -z $command ]]; then
+if [[ -z $1 ]]; then
 	echo "command missing" >&2
 	exit 1
 fi
+command="$1"
+shift
+args="$@"
 
 # search for matching files
 find_opts=()
@@ -76,7 +76,6 @@ find_opts=()
 [[ -n $opt_type ]] && find_opts+=($opt_type)
 [[ -n $opt_regex ]] && find_opts+=($opt_regex)
 readarray -d '' files < <(find . "${find_opts[@]}" -print0)
-
 if ((${#files[@]} == 0)); then
 	echo "No files found." >&2
 	exit 2
@@ -85,10 +84,8 @@ fi
 # grammarize the text
 this_each="this"
 ((${#files[@]} > 1)) && this_each="each"
-
 command_suffix=" $args"
 [[ -z $args ]] && command_suffix=""
-
 msg_suffix=""
 ((${#files[@]} > 1)) && msg_suffix="s"
 

@@ -459,21 +459,36 @@ function repeat_yt_dlp() {
 		echo "command 'yt-dlp' not found" >&2
 		return 1
 	fi
-	if (($# != 1 && $# != 2)); then
-		echo "usage: repeat_yt_dlp url [timeout=300]" >&2
+	if (($# < 1 || $# > 5)); then
+		echo "usage: repeat_yt_dlp url [timeout=300] [delay=3] [initTimeout=300] [initDelay=3]" >&2
 		return 1
 	fi
 	local url="$1"
 	shift
-	local timeout="${1:-300}" sleeptime=3
-	local failcount=0 failmax=$(python3 -c "print(round($timeout / $sleeptime))")
+	local timeout="${1:-300}"
+	shift
+	local delay="${1:-3}"
+	shift
+	local initTimeout="${1:-300}"
+	shift
+	local initDelay="${1:-3}"
+	local failcount=0
+	local failmax=$(python3 -c "print(round($timeout / $delay))")
+	local initFailcount=0
+	local initFailmax=$(python3 -c "print(round($initTimeout / $initDelay))")
+	# initial polling: loop until hit, return if timeout on no-hits
+	while ! yt-dlp "$url"; do
+		((++initFailcount >= initFailmax)) && return
+		sleep $initDelay
+	done
+	# subsequent polling: loop forever, break if timeout on consecutive no-hits
 	while true; do
 		if ! yt-dlp "$url"; then
 			((++failcount >= failmax)) && break
 		else
 			failcount=0
 		fi
-		sleep $sleeptime
+		sleep $delay
 	done
 }
 

@@ -47,6 +47,9 @@ sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt backintime
 # add Keyboard shortcut bindings: Shortcuts
 # - Minimize window: ❖ + M
 
+# set Keyboard compose key: Layouts > Options... > Position of Compose key
+# - [x] Pause
+
 # configure Mouse and Touchpad settings: Mouse > General
 # - disable "Paste the current selection when middle-click is pressed"
 
