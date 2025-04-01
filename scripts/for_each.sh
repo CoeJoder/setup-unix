@@ -14,13 +14,13 @@ unset _parsed_args
 function usage() {
 	cat >&2 <<-EOF
 		Usage:
-			$(basename ${BASH_SOURCE[0]}) [options] command [args...]
+		  $(basename ${BASH_SOURCE[0]}) [options] command [args...]
 		Options:
-		  --type c						Match files of type c; defaults to 'f' (see \`find -type\`)
-		  --regex pattern			File name matches regular expression pattern using 'posix-extended' syntax (see \`find -regex\`)
-		  --iregex pattern  	Like -regex, but the match is case insensitive (see \`find -iregex\`)
-		  --recursive, -r 		Search subfolders
-		  --help, -h					Display this help and exit
+		  --type c           Match files of type c; defaults to 'f' (see \`find -type\`)
+		  --regex pattern    File name matches regular expression pattern using 'posix-extended' syntax (see \`find -regex\`)
+		  --iregex pattern   Like -regex, but the match is case insensitive (see \`find -iregex\`)
+		  --recursive, -r    Search subfolders
+		  --help, -h         Display this help and exit
 	EOF
 }
 
