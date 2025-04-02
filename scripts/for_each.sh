@@ -8,6 +8,7 @@
 
 _parsed_args=$(getopt --alternative --options='r,h' --longoptions='type:,regex:,iregex:,recursive,help' \
 	--name "$(basename ${BASH_SOURCE[0]})" -- "$@")
+(($? != 0)) && exit 1
 eval set -- "$_parsed_args"
 unset _parsed_args
 
