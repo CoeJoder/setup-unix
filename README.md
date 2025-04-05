@@ -106,8 +106,9 @@ pipx install Pygments
 pipx install pipenv --user
 pipx install ruff
 
-# install Flathub & KeePassXC
+# install Flathub, Emote, KeePassXC
 flatpak install --system flathub
+flatpak install --system com.tomjwatson.Emote
 flatpak install --system org.keepassxc.KeePassXC
 # restore KeePassXC db from backup: ~/.keepassxc
 
