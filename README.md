@@ -106,9 +106,10 @@ pipx install Pygments
 pipx install pipenv --user
 pipx install ruff
 
-# install Flathub, Emote, KeePassXC
+# install Flathub, Emote, Krita, KeePassXC
 flatpak install --system flathub
 flatpak install --system com.tomjwatson.Emote
+flatpak install --system org.kde.krita
 flatpak install --system org.keepassxc.KeePassXC
 # restore KeePassXC db from backup: ~/.keepassxc
 
