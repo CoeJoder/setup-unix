@@ -17,7 +17,7 @@ bash for the shell, all set up using the configurations in this repo.
 
 If moving from a previous O/S instance:
 - ensure that a BackInTime `/home` snapshot is available
-- export Firefox bookmarks for each profile
+- export browser bookmarks for each profile
 
 ## Setup
 
@@ -60,6 +60,17 @@ echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] http
 sudo apt update
 sudo apt install brave-browser
 # set Brave as the default browser in "Preferred Applications"
+# pin Brave to Panel
+# import browser profiles
+
+# configure Brave settings: `brave://settings`
+# - On Startup: Open the New Tab page
+# - disable "Media Router"
+# - disable "WebTorrent"
+# - enable "Widevine"
+
+# configure Brave flags: `brave://flags/`
+# - middle-button-autoscroll
 
 # launch Firefox Profile Manager
 firefox -P
