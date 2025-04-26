@@ -72,6 +72,9 @@ sudo apt install brave-browser
 # configure Brave flags: `brave://flags/`
 # - middle-button-autoscroll
 
+# configure Brave shortcuts: `brave://settings/system/shortcuts`
+# - Move tab to new window: ctrl + shift + space
+
 # launch Firefox Profile Manager
 firefox -P
 # for each profile to restore:
