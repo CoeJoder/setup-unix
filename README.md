@@ -29,29 +29,39 @@ sudo apt update -y && sudo apt upgrade -y
 sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt backintime-qt chromium ripgrep jq
 # (no need to run `pipx ensurepath`, it's already set in ~/.profile)
 
-# set Calender custom format
-# - Date format: %A, %b %-d, %-I:%M %p
-# - Date format for tooltip: %A, %b %-d, %-I:%M %p
+# Calender
+#   Set custom format
+#   - Date format: %A, %b %-d, %-I:%M %p
+#   - Date format for tooltip: %A, %b %-d, %-I:%M %p
 
-# set Screensaver custom format
-# - Time Format: %-I:%M %p
-# - Date Format: %A, %b %-d
+# Screensaver
+#   Set custom format
+#   - Time Format: %-I:%M %p
+#   - Date Format: %A, %b %-d
 
-# add Clock desklet and set custom format
-# - Date format: %A, %b %-d, %-I:%M %p
+# Clock
+#   Add desklet and set custom format
+#   - Date format: %A, %b %-d, %-I:%M %p
 
-# set Files default view: Edit > Preferences > Views
-# - View new folders using: "List View"
-# - enable "Inherit view type from parent"
+# Files (Edit > Preferences > Views)
+#   Set default view
+#   - View new folders using: "List View"
+#   - enable "Inherit view type from parent"
 
-# add Keyboard shortcut bindings: Shortcuts
-# - Minimize window: ❖ + M
+# Keyboard (Shortcuts)
+#   Add shortcut bindings
+#   - Minimize window: ❖ + M
+#   Remove shortcut bindings
+#   - Move window to workspace above
+#   - Move window to workspace below
 
-# set Keyboard compose key: Layouts > Options... > Position of Compose key
-# - [x] Pause
+# Keyboard (Layouts > Options... > Position of Compose key)
+#   Set compose key
+#   - [x] Pause
 
-# configure Mouse and Touchpad settings: Mouse > General
-# - disable "Paste the current selection when middle-click is pressed"
+# Mouse and Touchpad (Mouse > General)
+#   Configure settings
+#   - disable "Paste the current selection when middle-click is pressed"
 
 # install Brave
 # see: https://brave.com/linux/
