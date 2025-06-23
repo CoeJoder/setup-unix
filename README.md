@@ -26,7 +26,7 @@ If moving from a previous O/S instance:
 sudo apt update -y && sudo apt upgrade -y
 
 # install APT packages
-sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt backintime-qt chromium ripgrep jq kazam
+sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt backintime-qt chromium ripgrep jq kazam playerctl
 # (no need to run `pipx ensurepath`, it's already set in ~/.profile)
 
 # Calender
@@ -49,11 +49,22 @@ sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt backintime
 #   - enable "Inherit view type from parent"
 
 # Keyboard (Shortcuts)
-#   Add shortcut bindings
+#   Add keyboard bindings
 #   - Minimize window: ❖ + M
-#   Remove shortcut bindings
+#   Remove keyboard bindings
 #   - Move window to workspace above
 #   - Move window to workspace below
+#   - Play
+#   - Pause playback
+#   - Stop playback
+#   - Previous track
+#   - Next track
+#   Add custom shortcuts
+#   - Play-pause (playerctl):     playerctl --player=%any,brave,firefox,chromium play-pause
+#   - Stop (playerctl):           playerctl --player=%any,brave,firefox,chromium stop
+#   - Previous track (playerctl): playerctl --player=%any,brave,firefox,chromium previous
+#   - Next track (playerctl):     playerctl --player=%any,brave,firefox,chromium next
+#   ...then set keyboard bindings to media keys.
 
 # Keyboard (Layouts > Options... > Position of Compose key)
 #   Set compose key
