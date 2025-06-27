@@ -515,5 +515,26 @@ function yes_or_no() {
 	fi
 }
 
+# set title of terminal tab (default: current tab)
+function set_tab_title() {
+	if (($# < 1)); then
+		echo 'usage: set_tab_title title [tab-id]' >&2
+		return 2
+	fi
+	local title="$1" tab cur_pane
+	shift
+	if (($# > 0)); then
+		tab="$1"
+	else
+		# find the current tab id
+		cur_pane="$(wezterm cli list-clients --format=json | jq -r '.[] |
+			.focused_pane_id')" || return
+		tab="$(wezterm cli list --format=json | jq --argjson cur_pane "$cur_pane" -r '.[] |
+			select(.pane_id==$cur_pane) |
+			.tab_id')" || return
+	fi
+	wezterm cli set-tab-title --tab-id "$tab" "$title" || return
+}
+
 # start tmux with the current environment
 if [ "$TMUX" = "" ] && [ "$SKIP_TMUX" != 0 ]; then tmux -L default; fi
