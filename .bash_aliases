@@ -387,7 +387,7 @@ function play_music_shuffled() {
 	choose_from_menu "Make your selection:" chosen_dir "${music_dirs[@]}"
 	readarray -d '' chosen_files < <(find "$chosen_dir" -regextype "$REGEX_TYPE" -iregex "$REGEX_AV" -type f -print0)
 	# TODO passing files as expanded-array doesn't shuffle, but globbing does
-	(celluloid --mpv-shuffle --mpv-fullscreen "${chosen_files[@]}" & >/dev/null)
+	(celluloid --mpv-shuffle --mpv-fullscreen "${chosen_files[@]}" &>/dev/null &)
 }
 
 # launch media player for 1337 h4cker jamz
