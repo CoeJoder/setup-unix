@@ -409,6 +409,12 @@ function code() {
 	codium "$codium_arg"
 }
 
+# push into directory of most recent codium project
+function cdproj() {
+	local last_proj_file="$HOME/.last_codium_project"
+	[[ -f $last_proj_file ]] && pushd "$(<"$last_proj_file")" &>/dev/null
+}
+
 # create a bounce-loop of a media file with filename like `foo-bounced.bar`
 function bounce_loop() {
 	if (($# != 1 && $# != 2)); then
