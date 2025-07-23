@@ -26,7 +26,7 @@ If moving from a previous O/S instance:
 sudo apt update -y && sudo apt upgrade -y
 
 # install APT packages
-sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt shellcheck backintime-qt chromium ripgrep jq kazam playerctl
+sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt shellcheck backintime-qt chromium ripgrep jq kazam playerctl devhelp cinnamon-doc
 # (no need to run `pipx ensurepath`, it's already set in ~/.profile)
 
 # Calender
