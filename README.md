@@ -26,7 +26,7 @@ If moving from a previous O/S instance:
 sudo apt update -y && sudo apt upgrade -y
 
 # install APT packages
-sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt shellcheck backintime-qt chromium ripgrep jq kazam playerctl devhelp cinnamon-doc
+sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt shellcheck backintime-qt chromium ripgrep jq kazam playerctl
 # (no need to run `pipx ensurepath`, it's already set in ~/.profile)
 
 # Calender
@@ -136,6 +136,10 @@ sudo apt update -y && sudo apt install -y neovim
 sudo update-alternatives --install /usr/bin/vi vi /usr/bin/nvim 60
 sudo update-alternatives --install /usr/bin/vim vim /usr/bin/nvim 60
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/nvim 60
+
+# install Linux Mint + Cinnamon dev tools and docs
+sudo apt install -y devhelp cinnamon-doc
+sudo apt install --install-recommends -y mint-dev-tools
 
 # install more APT packages (required by pyenv)
 sudo apt install -y build-essential libssl-dev zlib1g-dev \
