@@ -396,7 +396,7 @@ function robot_ears() {
 # simple codium launcher which caches path argument
 function code() {
 	local last_proj_file="$HOME/.last_codium_project"
-	local codium_arg=''
+	local codium_arg
 	if [[ $# -eq 0 ]]; then
 		if [[ -f $last_proj_file ]]; then
 			codium_arg="$(<"$last_proj_file")"
@@ -405,14 +405,18 @@ function code() {
 		codium_arg="$(realpath "$1")"
 		printf '%s' "$codium_arg" >"$last_proj_file"
 	fi
-	[[ -n $codium_arg ]] && pushd "$codium_arg" &>/dev/null
+	[[ -n $codium_arg && $(pwd -P) != "$codium_arg" ]] && pushd "$codium_arg" &>/dev/null
 	codium "$codium_arg"
 }
 
 # push into directory of most recent codium project
 function cdproj() {
 	local last_proj_file="$HOME/.last_codium_project"
-	[[ -f $last_proj_file ]] && pushd "$(<"$last_proj_file")" &>/dev/null
+	local codium_arg
+	if [[ -f $last_proj_file ]]; then
+		codium_arg="$(<"$last_proj_file")"
+		[[ -n $codium_arg && $(pwd -P) != "$codium_arg" ]] && pushd "$codium_arg" &>/dev/null
+	fi
 }
 
 # create a bounce-loop of a media file with filename like `foo-bounced.bar`
