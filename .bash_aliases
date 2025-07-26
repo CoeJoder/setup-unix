@@ -384,7 +384,9 @@ function play_music_shuffled() {
 	readarray -t music_dirs < <(find "$root_dir" -maxdepth 1 -type d -printf '%p\n')
 	choose_from_menu "Make your selection:" chosen_dir "${music_dirs[@]}"
 	readarray -d '' chosen_files < <(find "$chosen_dir" -regextype "$REGEX_TYPE" -iregex "$REGEX_AV" -type f -print0)
-	# TODO passing files as expanded-array doesn't shuffle, but globbing does
+	# Celluloid CLI won't initially shuffle playlist unless files are passed by globbing,
+	# (it only shuffles at the end of the last track), so we perform initial shuffle ourselves
+	readarray -t chosen_files < <(shuf -e "${chosen_files[@]}")
 	(celluloid --mpv-shuffle --mpv-fullscreen "${chosen_files[@]}" &>/dev/null &)
 }
 
