@@ -342,7 +342,7 @@ function lessget() {
 # source: https://stackoverflow.com/a/38996701/159570
 function get_latest_file() {
 	local dir=${1:-.}
-	readarray -t -d '' files < <(LC_ALL=C find "$dir" -name . -o -name '.*' \
+	readarray -td '' files < <(LC_ALL=C find "$dir" -name . -o -name '.*' \
 		-prune -o -type f -printf '%T@/%p\0' | sort -rzn | cut -zd/ -f2-)
 	((${#files[@]} > 0)) && printf '%s\n' "${files[0]}"
 }
@@ -381,12 +381,12 @@ function play_music_shuffled() {
 			return 1
 		fi
 	fi
-	readarray -t music_dirs < <(find "$root_dir" -maxdepth 1 -type d -printf '%p\n')
+	readarray -td '' music_dirs < <(find "$root_dir" -maxdepth 1 -type d -print0)
 	choose_from_menu "Make your selection:" chosen_dir "${music_dirs[@]}"
-	readarray -d '' chosen_files < <(find "$chosen_dir" -regextype "$REGEX_TYPE" -iregex "$REGEX_AV" -type f -print0)
+	readarray -td '' chosen_files < <(find "$chosen_dir" -regextype "$REGEX_TYPE" -iregex "$REGEX_AV" -type f -print0)
 	# Celluloid CLI won't initially shuffle playlist unless files are passed by globbing,
 	# (it only shuffles at the end of the last track), so we perform initial shuffle ourselves
-	readarray -t chosen_files < <(shuf -e "${chosen_files[@]}")
+	readarray -td '' chosen_files < <(shuf -ze "${chosen_files[@]}")
 	(celluloid --mpv-shuffle --mpv-fullscreen "${chosen_files[@]}" &>/dev/null &)
 }
 
