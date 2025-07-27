@@ -407,7 +407,14 @@ function code() {
 		codium_arg="$(realpath "$1")"
 		printf '%s' "$codium_arg" >"$last_proj_file"
 	fi
-	[[ -n $codium_arg && $(pwd -P) != "$codium_arg" ]] && pushd "$codium_arg" &>/dev/null
+	if [[ -n $codium_arg ]]; then
+		if [[ ! -d $codium_arg ]]; then
+			echo "not a directory: $codium_arg" >&2
+			unset codium_arg
+		elif [[ $(pwd -P) != "$codium_arg" ]]; then
+			pushd "$codium_arg" &>/dev/null
+		fi
+	fi
 	codium "$codium_arg"
 }
 
@@ -417,7 +424,15 @@ function cdproj() {
 	local codium_arg
 	if [[ -f $last_proj_file ]]; then
 		codium_arg="$(<"$last_proj_file")"
-		[[ -n $codium_arg && $(pwd -P) != "$codium_arg" ]] && pushd "$codium_arg" &>/dev/null
+		if [[ -z $codium_arg ]]; then
+			echo "no previous project directory" >&2
+			return 1
+		elif [[ ! -d $codium_arg ]]; then
+			echo "not a directory: $codium_arg" >&2
+			return 1
+		elif [[ $(pwd -P) != "$codium_arg" ]]; then
+			pushd "$codium_arg" &>/dev/null
+		fi
 	fi
 }
 
