@@ -179,11 +179,17 @@ function luks_close() ( # subshell function
 )
 
 # in-place shell selection list
-# source: https://askubuntu.com/a/1386907
-# changes: syntax cleanup, linting, cyclic selector
+# original by Guss: https://askubuntu.com/a/1386907
+# improvements: syntax cleanup, shellcheck-linted, cyclic menu selection, compatible with `set -e`
+#
+# example usage:
+#   apples=("Red Delicious" "Granny" "Cosmic Crisp")
+#   choose_from_menu "Select an apple:" chosen "${apples[@]}"
+#   echo "You chose: $chosen"
 function choose_from_menu() {
 	local -r prompt="$1" outvar="$2" options=("${@:3}")
-	local cur=0 count=${#options[@]} index=0 esc
+	local -i cur=0 count=${#options[@]} index=0
+	local esc
 	esc=$(echo -en "\e") # cache ESC as test doesn't allow esc codes
 	printf "%s\n" "$prompt"
 	while true; do
@@ -195,15 +201,15 @@ function choose_from_menu() {
 			else
 				echo "  $o"
 			fi
-			((index++))
+			index=$((index+1))
 		done
 		IFS= read -rs -n3 key             # wait for user to key in arrows or ENTER
 		if [[ $key == "${esc}[A" ]]; then # up arrow
-			((cur--))
-			((cur < 0)) && ((cur = count - 1))
+			cur=$((cur-1))
+			((cur < 0)) && cur=$((count - 1))
 		elif [[ $key == "${esc}[B" ]]; then # down arrow
-			((cur++))
-			((cur >= count)) && ((cur = 0))
+			cur=$((cur+1))
+			((cur >= count)) && cur=0
 		elif [[ $key == "" ]]; then # nothing, i.e the read delimiter - ENTER
 			break
 		fi
