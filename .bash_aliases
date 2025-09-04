@@ -116,11 +116,17 @@ function read_with_default() {
 function luks_open() ( # subshell function
 	set -Eeuo pipefail # bash strict-mode
 
-	blkid_output=$(blkid -t TYPE=crypto_LUKS -lo export)
+	# from the sourced `blkid` output
+	# shellcheck disable=SC2034
+	local DEVNAME UUID TYPE
+	local blkid_output name mount_point mapped_device
+
+	blkid_output=$(sudo blkid -t TYPE=crypto_LUKS -lo export)
 	if [[ -z $blkid_output ]]; then
 		echo "no LUKS container found" >&2
 		exit 1
 	fi
+	# shellcheck source=/dev/null
 	source <(echo "$blkid_output")
 	if [[ -z $DEVNAME ]]; then
 		echo "expected DEVNAME to be non-empty" >&2
@@ -137,6 +143,11 @@ function luks_open() ( # subshell function
 
 	default_val="/mnt/$name"
 	read_with_default "Mount point ($default_val): " "$default_val" mount_point
+	if [[ ! -d $mount_point ]]; then
+		if yes_or_no --default-yes "Mount point does not exist.  Create it?"; then
+			sudo mkdir -p "$mount_point"
+		fi
+	fi
 
 	default_val="/dev/mapper/$name"
 	read_with_default "Mapped device ($default_val): " "$default_val" mapped_device
@@ -150,11 +161,17 @@ function luks_open() ( # subshell function
 function luks_close() ( # subshell function
 	set -Eeuo pipefail # bash strict-mode
 
-	blkid_output=$(blkid -t TYPE=crypto_LUKS -lo export)
+	# from the sourced `blkid` output
+	# shellcheck disable=SC2034
+	local DEVNAME UUID TYPE
+	local blkid_output name mount_point
+
+	blkid_output=$(sudo blkid -t TYPE=crypto_LUKS -lo export)
 	if [[ -z $blkid_output ]]; then
 		echo "no LUKS container found" >&2
 		exit 1
 	fi
+	# shellcheck source=/dev/null
 	source <(echo "$blkid_output")
 	if [[ -z $DEVNAME ]]; then
 		echo "expected DEVNAME to be non-empty" >&2
@@ -567,5 +584,7 @@ function set_tab_title() {
 	wezterm cli set-tab-title --tab-id "$tab" "$title" || return
 }
 
-# start tmux with the current environment
-if [ "$TMUX" = "" ] && [ "$SKIP_TMUX" != 0 ]; then tmux -L default; fi
+if [[ $TMUX == "" ]] && [[ $SKIP_TMUX != 0 ]]; then
+	# start tmux with the current environment
+	tmux -L default
+fi

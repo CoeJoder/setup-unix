@@ -1,4 +1,4 @@
-#!/bin.bash
-export SKIP_TMUX=0
-. ~/.bashrc
+#!/bin/bash
 
+export SKIP_TMUX=0
+source "$HOME/.bashrc"

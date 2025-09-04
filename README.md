@@ -148,12 +148,16 @@ libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-d
 # install pyenv
 curl -fsSL https://pyenv.run | bash
 
+# alias `python` to `python3`
+pyenv global 3
+
 # install ytp-dlp, Pygments, Pipenv, ruff, wtfis
 pipx install yt-dlp[default]
 pipx install Pygments
 pipx install pipenv --user
 pipx install ruff
 pipx install wtfis
+pipx install poetry
 
 # install Flathub, Emote, Krita, KeePassXC
 flatpak install --system flathub
@@ -238,6 +242,13 @@ nvim
 :TransparentEnable
 # the previous command may give innocuous error message;
 # restart neovim to see if transparency is working
+
+# install PyCharm
+# TODO
+
+# configure Pycharm Terminal (Tools > Terminal)
+# - Shell path: /bin/bash --rcfile ~/.bashrc_skip_tmux
+# - disable "Shell integration"
 
 # reboot
 sudo reboot
