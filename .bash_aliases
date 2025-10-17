@@ -77,6 +77,11 @@ vultrssh() {
 	_ssh_add ~/.ssh/id_ed25519_vultr
 }
 
+# load homelab SSH key
+homelabssh() {
+	_ssh_add ~/.ssh/id_ed25519_homelab
+}
+
 # work with npm in ~/.npm_globals
 npm_g() {
 	(cd ~/.npm_global && npm $@)
