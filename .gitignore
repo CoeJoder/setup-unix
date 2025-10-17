@@ -61,7 +61,7 @@
 # track specific scripts
 !scripts
 scripts/*
-!scripts/vm.sh
+!scripts/vm_win10.sh
 !scripts/new_drive_test.sh
 !scripts/secure_drive_wipe.sh
 !scripts/pygterminize.py
