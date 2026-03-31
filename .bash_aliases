@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # projects directory
 export PROJECTS_DIR="$HOME/projects"
 if [[ ! -d $PROJECTS_DIR ]]; then
