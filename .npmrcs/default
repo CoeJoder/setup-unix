@@ -1,4 +1,5 @@
 cache=~/.cache/npm
 depth=0
 cache-min=3600
-
+ignore-scripts=true
+save-exact=true

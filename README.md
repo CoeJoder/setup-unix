@@ -92,7 +92,8 @@ sudo apt install brave-browser
 # - enable "Widevine"
 
 # configure Brave flags: `brave://flags/`
-# - middle-button-autoscroll
+# - enable "middle-button-autoscroll"
+# - disable "brave-change-active-tab-on-scroll-event"
 
 # configure Brave shortcuts: `brave://settings/system/shortcuts`
 # - Move tab to new window: ctrl + shift + space
@@ -235,6 +236,8 @@ update-desktop-database
 # setup NodeJS
 n lts
 npm_g install
+# refuse any package published less than 3 days ago
+npm_g config set min-release-age 3
 
 # setup neovim plugins
 nvim
