@@ -52,6 +52,8 @@ sudo apt install -y tmux pipx python3-pynvim gawk git firetools shfmt shellcheck
 #   Add keyboard bindings
 #   - Minimize window: ❖ + M
 #   - Toggle always on top: ctrl + shift + w
+#   - Increase opacity: ctrl + shift +
+#   - Decrease opacity: ctrl + shift -
 #   Remove keyboard bindings
 #   - Move window to workspace above
 #   - Move window to workspace below
