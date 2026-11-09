@@ -591,6 +591,56 @@ function set_tab_title() {
 	wezterm cli set-tab-title --tab-id "$tab" "$title" || return
 }
 
+# ==============================================================================
+# Function: pitch_shift
+# Description: Adjusts the musical pitch and playback speed of audio/video files
+#              using FFmpeg with high-quality rubberband pitch shifting.
+#
+# Arguments:
+#   $1 - Input file path (e.g., input.webm, song.mp3)
+#   $2 - Pitch shift in semitones (e.g., -2 for down 1 step, 1 for up 1 half step)
+#   $3 - [Optional] Playback speed multiplier (e.g., 1.25 for 25% faster, default: 1.0)
+#
+# Dependencies:
+#   - FFmpeg (compiled with '--enable-librubberband')
+#   - bc (command-line calculator for mathematical formula calculation)
+# ==============================================================================
+function pitch_shift() {
+    if [ "$#" -lt 2 ]; then
+        echo "Usage: pitch_shift <input_file> <semitones> [speed]"
+        echo "Use positive numbers to go up, negative to go down."
+        echo "Speed is optional (e.g., 1.5 for 50% faster, 0.8 for 20% slower)."
+        echo "Examples:"
+        echo "  pitch_shift input.webm -2       # Down 1 full step, normal speed"
+        echo "  pitch_shift input.webm -2 1.25  # Down 1 full step, 25% faster"
+        echo "  pitch_shift song.mp3 1 0.9      # Up 1 half step, 10% slower"
+        return 1
+    fi
+
+    local infile="$1"
+    local semitones="$2"
+    local speed="${3:-1.0}"
+
+    local filename="${infile%.*}"
+    local extension="${infile##*.}"
+    local outfile="${filename}_shifted_${semitones}st_${speed}x.${extension}"
+
+    local pitch_ratio
+    pitch_ratio=$(echo "scale=6; e($semitones * l(2) / 12)" | bc -l)
+
+    echo "Processing: $infile"
+    echo "Shifting pitch by: $semitones semitones (Ratio: $pitch_ratio)"
+    echo "Adjusting speed to: ${speed}x"
+    echo "Output file: $outfile"
+
+    local filter_string="rubberband=pitch=$pitch_ratio,atempo=$speed"
+
+    ffmpeg -i "$infile" \
+           -af "$filter_string" \
+           -c:v copy \
+           "$outfile"
+}
+
 if [[ $TMUX == "" ]] && [[ $SKIP_TMUX != 0 ]]; then
 	# start tmux with the current environment
 	tmux -L default
